@@ -16,7 +16,7 @@
 
 
 
-        This can be run using the following processes.
+        This can be run using the following processes
         Make sure that this script is in the same folder as the files downloaded from this source
             https://icecube.wisc.edu/science/data/TXS0506_point_source
 
