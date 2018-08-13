@@ -119,7 +119,7 @@ def process_all_files():
             mylist.append(float((i.split())[number]))
 
     def process_the_file(name):
-        FILE = open(os.path.join(__location__, "data\\" +name), 'r')
+        FILE = open(os.path.join(__location__,"data", name), 'r')
         lines = []
         for i in FILE:
             lines.append(i)
