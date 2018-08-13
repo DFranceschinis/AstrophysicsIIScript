@@ -81,6 +81,7 @@ __location__ = os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file
 ### Set up the files to be processed and used as data.
 
 NAMES = []
+NAMES.append("events_IC40.txt")
 NAMES.append("events_IC59.txt")
 NAMES.append("events_IC79.txt")
 NAMES.append("events_IC86a.txt")
@@ -96,6 +97,7 @@ RA = []
 DEC = []
 UNC = []
 log10 = []
+separations = []
 
 ###
 
@@ -120,17 +122,15 @@ def process_all_files():
 
     def process_the_file(name):
         FILE = open(os.path.join(__location__,"data", name), 'r')
-        lines = []
+        header = FILE.readline()
         for i in FILE:
-            lines.append(i)
+            M,R,D,U,l = i.strip().split()
+            MJD.append(M)
+            RA.append(R)
+            DEC.append(D)
+            UNC.append(U)
+            log10.append(l)
         
-        lines = lines[1:] # Removes the header information
-
-        process(MJD, lines, 0)
-        process(RA, lines, 1)
-        process(DEC, lines, 2)
-        process(UNC, lines, 3)
-        process(log10, lines, 4)
 
     for file in NAMES:
         process_the_file(file)
@@ -146,13 +146,20 @@ def plot():
     plt.ylabel("Luminosity [log10]")
     plt.show()
 
-def find_angular_separation(origin, point):
-    pass
+def find_angular_separation(origin_RA, origin_DEC, point_RA, point_DEC):
+    import astropy.units as u
+    from astropy.coordinates import SkyCoord
 
+    origin_coord = SkyCoord(origin_RA*u.deg, origin_DEC*u.deg)
+    point_coord = SkyCoord(point_RA*u.deg, point_DEC*u.deg)
+
+
+    return origin_coord.separation(point_coord)
 
 ### run this function to actually DO the stuff.
 def run():
     
+
     process_all_files()
     plot()
 
