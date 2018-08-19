@@ -157,12 +157,34 @@ def find_angular_separation(origin_RA, origin_DEC, point_RA, point_DEC):
 
     return origin_coord.separation(point_coord)
 
+def sky_map():
+	import matplotlib
+	import matplotlib.pyplot as plt
+	import numpy as np
+	from mpl_toolkits.axes_grid1 import make_axes_locatable
+
+	coords = []
+	coords.append((RA, DEC))
+
+	fig = plt.figure()
+	ax = fig.add_subplot(111)
+	divider = make_axes_locatable(ax)
+	cax = divider.append_axes('right', size='5%', pad=0.05)
+
+	smap = ax.scatter(RA, DEC, label='IceCube Data', c = log10, cmap = 'BuPu', s = 50)
+	ax.plot(77.3582, 5.69314, 'ro', label='TXS0506+056')
+	ax.legend(loc="upper right")
+	ax.set(title='Right Ascension and Declination of Data Readings', xlabel='Right Ascension (Degrees)', ylabel='Declination (Degrees)')
+	fig.colorbar(smap, cax=cax, orientation='vertical', label='Energy')
+	plt.show()      
+
 ### run this function to actually DO the stuff.
 def run():
     
 
     process_all_files()
     plot()
+    sky_map()
 
 #	This allows the code to run if you just use $ python AstroScript
 if __name__ == '__main__':
