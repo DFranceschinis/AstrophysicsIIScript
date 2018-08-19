@@ -130,6 +130,7 @@ def process_all_files():
             DEC.append(D)
             UNC.append(U)
             log10.append(l)
+            seperations.append()
         
 
     for file in NAMES:
