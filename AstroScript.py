@@ -69,7 +69,7 @@
 ###
 
 """
-
+form useful_functions import *
 ### Set up the location of the files. Make sure the files are in the same directory as this script.
 
 import os
