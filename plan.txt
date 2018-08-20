@@ -5,9 +5,11 @@ Plans:
 
 Function: Find the solid angle of test region
 Function: Find solid angle of strip
+	Kendall are handling these two
 
 Function: Count points in test region
 Function: Count points in strip
+	Daniel has handled these two
 
 Function: Poisson probability of N counts in the region, given background.
 
