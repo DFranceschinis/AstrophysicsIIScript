@@ -1,0 +1,60 @@
+Overall Goal:
+Analyse data and test whether the proposed source is significant or not. 
+
+Plans:
+
+Function: Find the solid angle of test region
+Function: Find solid angle of strip
+
+Function: Count points in test region
+Function: Count points in strip
+
+Function: Poisson probability of N counts in the region, given background.
+
+Function: Count number of events in time window
+Function: Scan multiple windows and find maximum (statistical)
+Function: Find the event density in time for a given time window.
+
+Function: Conversion from MJD to Regular Time.
+
+Task: Clean up the plot() output.
+	Colour based upon something
+	Change the window to the same time window as the paper.
+
+Task: Use functions to find statistical signicance of event densities for given regions
+	Using a flat distribution. Ignoring time.
+
+Task: Use functions to find statistical sigificance of event densities in time for given time regions
+	Using poisson. Ignoring spacial component.
+
+Task: Find the weighting of the neutrino energy for a given angular separation
+	Note, maybe not every data point is used.
+
+Task: Go through paper and figure out what units they use, and figure out how to convert from our
+	data values into those units. IE, convert MJD to Calendar day and so forth.
+		Should be able to reverse the direction as well.
+
+Task: Go through paper and find THEIR mean rates, their time windows and so forth...
+
+Task: Create some background notes on the production of neutrinos in blazars. What a blazar is. How 	we detect neutrinos in icecube. What is icecube? Describing the different IC#'s. Any other 
+
+
+
+
+
+Check spacial density against background.
+	Create search window around source
+	compare against random count.
+	Poisson probability of the # events in the time interval.
+
+Check time density against background
+
+
+Can compare the mean rate from the paper against detection
+
+
+FOR LATER:
+
+Function: Find Non-flat probability distribution in a test region.
+
+Task: Compare densities in both space and time. Challenge.
