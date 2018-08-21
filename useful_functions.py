@@ -12,19 +12,31 @@ def solid_angle(theta):
 	return(d_omega)	
 
 #	solid_angle_strip is a function which calculates the solid angle of a strip of sky.
-#	It takes in a scalar value theta1 which is the angle in degrees from vertical to 
-# 	the top of the strip, scalar value theta2 which is the angle in degrees from
-# 	vertical to the bottom of the strip, and scalar value extent which is the extent 
-# 	of the strip in degrees.
-#	The function uses the function solid_angle
+#	It takes in a scalar value dec1 which is the declination in degrees of the top vertical
+#	extent desired of the strip, scalar value dec2 which is the declination in degrees of
+# 	the bottom vertical extent of the strip, and scalar value extent which is the horizontal 
+#	extent of the strip in degrees. If the horizontal extent is not given then it is assumed 
+#	that the entire strip of the sphere is desired. absolute is a boolean value which can be 
+#	changed if the user does not wish to find only the magnitude of the solid angle.
+#	The function uses the function solid_angle and will work for any given declinations.
 #	The function returns the solid angle of that strip.
-def solid_angle_strip(theta1, theta2, extent, abs = True):
+def solid_angle_strip(dec1, dec2, extent = 360, absolute = True):
 	import numpy as np
 	import math
 
-	d_omega = (solid_angle(theta2) - solid_angle(theta1))*(extent/360)
-	if(abs):
-		d_omega = math.abs(d_omega)
+	formula = np.sign(dec1)*np.sign(dec2)
+
+	dec1 = abs(dec1)
+	dec2 = abs(dec2)
+	theta1 = 90-dec1
+	theta2 = 90-dec2
+
+	if formula == -1:
+		d_omega = (4*np.pi - solid_angle(theta1) - solid_angle(theta2))*(extent/360)
+	else:	
+		d_omega = (solid_angle(theta2) - solid_angle(theta1))*(extent/360)
+	if absolute:
+		d_omega = abs(d_omega)
 
 	return(d_omega)
 
