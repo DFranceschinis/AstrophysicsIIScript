@@ -135,7 +135,7 @@ def process_all_files():
 		header = FILE.readline()
 		for i in FILE:
 			M,R,D,U,l = i.strip().split()
-			NEUTRINOS.append(neutrino(M,R,D,U,l))
+			NEUTRINOS.append(neutrino(float(M),float(R),float(D),float(U),float(l)))
 		
 
 	for file in NAMES:
