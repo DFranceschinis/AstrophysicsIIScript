@@ -106,7 +106,7 @@ class neutrino(object):
 		self.DEC = DEC
 		self.UNC = UNC
 		self.ENERGY = ENERGY
-		#self.separation = find_angular_separation(ORIGIN_RA, ORIGIN_DEC, self.RA, self.DEC)
+		self.separation = find_angular_separation(ORIGIN_RA, ORIGIN_DEC, self.RA, self.DEC)
 
 	# def __repr__(self):
 	#     return ''.join("Neutrino Data Point: ","\tMJD: ",self.MJD,"\tRA: ",self.RA,"\tDEC",self.DEC,"\tUNC",self.UNC,"ENERGY: ",self.log10)
