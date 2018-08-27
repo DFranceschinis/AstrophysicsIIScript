@@ -111,9 +111,24 @@ class neutrino(object):
 	# def __repr__(self):
 	#     return ''.join("Neutrino Data Point: ","\tMJD: ",self.MJD,"\tRA: ",self.RA,"\tDEC",self.DEC,"\tUNC",self.UNC,"ENERGY: ",self.log10)
 
+#	class to hold the information of each of the measuring periods of IceCube
+class measure_period(object):
+
+	def __init__(self,line):
+		import astropy
+		from datetime import datetime	
+
+		self.line = line
+		name, st_yr, st_mth, st_day, end_yr, end_mth, end_day, density, _, error = line.strip().split()
+		self.start  = astropy.date(datetime.date(st_yr,st_mth,st_day))
+		self.end = astropy.date(datetime.date(end_yr,end_mth,end_day)) 
+		self.density = float(density)
+		self.error = (float(error[:-1]))/100
+
 ### Data Containers that are used to store the data that is processed.
 
 NEUTRINOS = []
+PERIODS = []
 
 ###
 
@@ -126,6 +141,7 @@ def process_all_files():
 	#   Clean up previous runs
 
 	NEUTRINOS.clear()
+	PERIODS.clear()
 	def process(mylist, lines, number):
 		for i in lines:
 			mylist.append(float((i.split())[number]))
@@ -137,6 +153,9 @@ def process_all_files():
 			M,R,D,U,l = i.strip().split()
 			NEUTRINOS.append(neutrino(float(M),float(R),float(D),float(U),float(l)))
 		
+	FILE = open(os.path.join(__location__,"data/list_of_samples.txt"))
+	for line in FILE:
+		PERIODS.append(measure_period(line))
 
 	for file in NAMES:
 		process_the_file(file)
