@@ -133,7 +133,23 @@ def poisson_prob(num_events,background):
 	import numpy as np
 	import math
 	
-	P_prob((background**n)/(math.factorial(n)))*np.exp(-background)
+	P_prob = ((background**n)/(math.factorial(n)))*np.exp(-background)
 
 	return P_prob
 			
+
+
+###	Split a list of points into sublists that are split according to time intervals
+###	that are described by the event density windows that are processed seperately.
+###	It returns a list of tuples. Each of these tuples contains the time window (so you can find the density),
+###	and a list of all points in that time window
+
+def event_density_windows(point_list, window_list):
+	final_list = list()
+	for window in window_list:
+		new_list = list()
+		for point in point_list:
+			if (point.MJD >= window.min and point.MJD <= window.max):
+				new_list.append(point)
+		final_list.append((window, new_list))
+	return final_list
