@@ -3,18 +3,9 @@ Analyse data and test whether the proposed source is significant or not.
 
 Plans:
 
-Function: Find the solid angle of test region
-Function: Find solid angle of strip
-	Kendall has handled these two
 
-Function: Count points in test region
-Function: Count points in strip
-	Daniel has handled these two
 
-Function: Poisson probability of N counts in the region, given background.
-	Kendall is going to start working on this, unless there are any objections :)
 
-Function: Count number of events in time window
 Function: Scan multiple windows and find maximum (statistical)
 Function: Find the event density in time for a given time window.
 

@@ -54,7 +54,7 @@ def find_points_within_angle(origin_RA, origin_DEC, points, max_angle):
 
 ###	This will take two angles for the inner and outer edges of the strip and the points
 ###	This will return a list of the points that are in the region.
-###	Note, the angles are the inner/outer. The order doesn't matter.
+###	num_eventsote, the angles are the inner/outer. The order doesn't matter.
 def find_points_in_strip(theta1, theta2, points):
 	matches = []
 
@@ -120,3 +120,20 @@ class Time_window_searcher(object):
 		window = find_points_in_time_window(self.cur_start, self.cur_end, self.points)
 		self.cur_start, self.cur_end = self.cur_end, self.cur_end + self.time_window_size
 		return window
+
+
+#	poisson_prob(num_events,background) gives the probability as given by a Poisson distribution of 
+#	finding num_events events given a constant independent background rate of background events in 
+#	a specified area or time interval. 
+#	The function takes in parameter num_events, the scalar value of the number of events which one wants 
+#	to find the probability of occuring, and background, the constant rate of background events which 
+#	occur independently of the space or time interval.
+#	The function returns a scalar value the probability for each given value of num_events events occuring.
+def poisson_prob(num_events,background):
+	import numpy as np
+	import math
+	
+	P_prob((background**n)/(math.factorial(n)))*np.exp(-background)
+
+	return P_prob
+			
