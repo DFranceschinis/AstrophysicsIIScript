@@ -149,7 +149,7 @@ def event_density_windows(point_list, window_list):
 	for window in window_list:
 		new_list = list()
 		for point in point_list:
-			if (point.MJD >= window.min and point.MJD <= window.max):
+			if (point.MJD >= window.start and point.MJD <= window.end):
 				new_list.append(point)
 		final_list.append((window, new_list))
 	return final_list
