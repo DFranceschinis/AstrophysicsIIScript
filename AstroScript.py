@@ -116,12 +116,12 @@ class measure_period(object):
 
 	def __init__(self,line):
 		import astropy
-		from datetime import datetime	
+		from datetime import date	
 
 		self.line = line
 		name, st_yr, st_mth, st_day, end_yr, end_mth, end_day, density, _, error = line.strip().split()
-		self.start  = astropy.date(datetime.date(st_yr,st_mth,st_day))
-		self.end = astropy.date(datetime.date(end_yr,end_mth,end_day)) 
+		self.start  = astropy.datetime.date(st_yr,st_mth,st_day)
+		self.end = astropy.datetime.date(end_yr,end_mth,end_day) 
 		self.density = float(density)
 		self.error = (float(error[:-1]))/100
 
@@ -153,8 +153,10 @@ def process_all_files():
 			M,R,D,U,l = i.strip().split()
 			NEUTRINOS.append(neutrino(float(M),float(R),float(D),float(U),float(l)))
 		
-	FILE = open(os.path.join(__location__,"data/list_of_samples.txt"))
+	FILE = open(os.path.join(__location__,"data/list_of_samples.txt")).readlines()
+	firstLine = FILE.pop(0)
 	for line in FILE:
+
 		PERIODS.append(measure_period(line))
 
 	for file in NAMES:
