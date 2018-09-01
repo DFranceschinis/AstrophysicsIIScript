@@ -115,13 +115,14 @@ class neutrino(object):
 class measure_period(object):
 
 	def __init__(self,line):
-		import astropy
-		from datetime import date	
+		import datetime	
 
 		self.line = line
 		name, st_yr, st_mth, st_day, end_yr, end_mth, end_day, density, _, error = line.strip().split()
-		self.start  = astropy.datetime.date(st_yr,st_mth,st_day)
-		self.end = astropy.datetime.date(end_yr,end_mth,end_day) 
+		st_date = st_yr+st_mth+st_day
+		end_date = end_yr+end_mth+end_day
+		self.start  = datetime.datetime.strptime(st_date, '%Y%b%d')
+		self.end = datetime.datetime.strptime(end_date, '%Y%b%d') 
 		self.density = float(density)
 		self.error = (float(error[:-1]))/100
 
