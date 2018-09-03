@@ -178,6 +178,27 @@ def plot():
 	plt.show()
 
 
+def test_window_search():
+	###	This will collect the windows. I will now find the expected number per time window, and if
+	###	it is less than the actual number, print it.
+	for collection in Time_window_searcher(NEUTRINOS[0].MJD, NEUTRINOS[-1].MJD, TIME = 10, NEUTRINOS):
+		total_expected = 0
+		for window in event_density_windows(NEUTRINOS, PERIODS):
+			###	Collection[1] is the start time of the collection, window[0].start is the start of this time block
+			###	Finding the max will find the lower bounds to determine the density
+			time_start = max(collection[1], window[0].start)
+			time_end = min(collection[2], window[0].end)
+
+			expected = window[0].density * (time_end-time_start)
+			total_expected = total_expected + expected
+		if (len(collection[0]) > total_expected):
+			print(collection)
+	
+
+
+
+
+
 def sky_map():
 	import matplotlib
 	import matplotlib.pyplot as plt

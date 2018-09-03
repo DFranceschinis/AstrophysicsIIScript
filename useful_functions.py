@@ -118,8 +118,10 @@ class Time_window_searcher(object):
 			self.cur_end = self.time_end
 
 		window = find_points_in_time_window(self.cur_start, self.cur_end, self.points)
+		start = self.cur_start
+		end = self.cur_end
 		self.cur_start, self.cur_end = self.cur_end, self.cur_end + self.time_window_size
-		return window
+		return (window, start, end)
 
 
 #	poisson_prob(num_events,background) gives the probability as given by a Poisson distribution of 
