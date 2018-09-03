@@ -116,13 +116,17 @@ class measure_period(object):
 
 	def __init__(self,line):
 		import datetime	
+		import astropy
+		from astropy.time import Time
 
 		self.line = line
 		name, st_yr, st_mth, st_day, end_yr, end_mth, end_day, density, _, error = line.strip().split()
 		st_date = st_yr+st_mth+st_day
 		end_date = end_yr+end_mth+end_day
-		self.start  = datetime.datetime.strptime(st_date, '%Y%b%d')
-		self.end = datetime.datetime.strptime(end_date, '%Y%b%d') 
+		start  = datetime.datetime.strptime(st_date, '%Y%b%d')
+		end = datetime.datetime.strptime(end_date, '%Y%b%d')
+		self.start = Time(start, format='datetime').mjd
+		self.end = Time(start, format='datetime').mjd
 		self.density = float(density)
 		self.error = (float(error[:-1]))/100
 
