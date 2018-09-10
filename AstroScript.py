@@ -250,7 +250,7 @@ def run():
 if __name__ == '__main__':
 	run()
 
-
+#	randomised_times creates an array of random 'event' times in MJD.
 def randomised_times():
 	starts = [st.start for st in PERIODS]
 	ends = [en.end for en in PERIODS]

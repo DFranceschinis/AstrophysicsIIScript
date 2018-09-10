@@ -135,10 +135,21 @@ def poisson_prob(num_events,background):
 	import numpy as np
 	import math
 	
-	P_prob = ((background**n)/(math.factorial(n)))*np.exp(-background)
+	P_prob = ((background**num_events)/(math.factorial(num_events)))*np.exp(-background)
 
 	return P_prob
-			
+
+
+#	A function that calculates the poisson probability for finding a number of events GREATER THAN or
+#	EQUAL TO a given value Num_events. It will use the function poisson_prob() and sum over numbers up
+#	to Num_events and will subtract these from one.
+def summed_poisson_prob(Num_events, background):
+
+	Prob = sum([poisson_prob(s, background) for s in range(Num_events)])
+
+	summed_P_prob = 1 - Prob	
+
+	return summed_P_prob		
 
 
 ###	Split a list of points into sublists that are split according to time intervals
