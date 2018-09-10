@@ -10,6 +10,7 @@ Function: Scan multiple windows and find maximum (statistical)
 Function: Find the event density in time for a given time window.
 
 Function: Conversion from MJD to Regular Time.
+		Kendall has done as part of measure_periods objectS
 
 
 Task: Rearrange the data, putting all the values into a point class, and change functionality to search over

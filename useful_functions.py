@@ -155,3 +155,16 @@ def event_density_windows(point_list, window_list):
 				new_list.append(point)
 		final_list.append((window, new_list))
 	return final_list
+
+
+#	Create 1257 randomised 'event times' in MJD which fit in the range of the
+#	first measuring day and the last measuring day. It takes in the start date
+#	in MJD of neutrino measurements at IceCube and the end date of measurements 
+#	relevant to the data set.
+
+def random_event_time(measuring_start, measuring_end):
+	import random
+
+	randomTime = random.uniform(measuring_start, measuring_end)
+
+	return randomTime	
