@@ -266,23 +266,23 @@ def randomised_times():
 
 	for event in NEUTRINOS:
 
-		if(event.MJD >= starts[0] and events.MJD <= ends[0]):
+		if(event.MJD >= starts[0] and event.MJD <= ends[0]):
 			events1+=1
-		elif(event.MJD > starts[1] and events.MJD <= ends[1]):
+		elif(event.MJD > starts[1] and event.MJD <= ends[1]):
 			events2+=1
-		elif(event.MJD > starts[2] and events.MJD <= ends[2]):
+		elif(event.MJD > starts[2] and event.MJD <= ends[2]):
 			events3+=1
-		elif(event.MJD > starts[3] and events.MJD <= ends[3]):
+		elif(event.MJD > starts[3] and event.MJD <= ends[3]):
 			events4+=1			
-		elif(event.MJD > starts[4] and events.MJD <= ends[4]):
+		elif(event.MJD > starts[4] and event.MJD <= ends[4]):
 			events5+=1	
-		elif(event.MJD > starts[5] and events.MJD <= ends[5]):
+		elif(event.MJD > starts[5] and event.MJD <= ends[5]):
 			events6+=1	
 		else:
 			overflow+=1	
 
 	for i in range(events1):	
-		randomTimeArray[i] = random_event_time(starts[0],ends[0])
+		randomTimeArray.append(random_event_time(starts[0],ends[0]))
 	for i in range(events2):
 		randomTimeArray.append(random_event_time(starts[1],ends[0]))
 	for i in range(events3):
