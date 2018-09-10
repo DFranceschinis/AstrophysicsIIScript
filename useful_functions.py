@@ -9,7 +9,7 @@ def solid_angle(theta):
 	#solid angle formula
 	d_omega = 2*np.pi*(1-np.cos(theta))
 
-	return(d_omega)	
+	return(math.degrees(d_omega))	
 
 #	solid_angle_strip is a function which calculates the solid angle of a strip of sky.
 #	It takes in a scalar value dec1 which is the declination in degrees of the top vertical

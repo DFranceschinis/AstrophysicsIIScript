@@ -196,19 +196,26 @@ def test_window_search():
 	###	This will collect the windows. I will now find the expected number per time window, and if
 	###	it is less than the actual number, print it.
 	All = list()
-	for collection in Time_window_searcher(NEUTRINOS[0].MJD, NEUTRINOS[-1].MJD, 1000, NEUTRINOS):
+	total_counted = 0
+	for collection in Time_window_searcher(PERIODS[0].start, PERIODS[-1].end, 10000, NEUTRINOS):
+		print("I have a collection:", collection[1], collection[2])	#	This is working (apparently)
 		total_expected = 0
+		index = -1
+		total_counted += 1
 		for window in event_density_windows(NEUTRINOS, PERIODS):
+			index += 1
 			###	Collection[1] is the start time of the collection, window[0].start is the start of this time block
 			###	Finding the max will find the lower bounds to determine the density
 			time_start = max(collection[1], window[0].start)
 			time_end = min(collection[2], window[0].end)
-
+			if time_start > time_end or time_end < time_start:
+				continue
 			expected = TOTAL_AREA * window[0].density * (time_end-time_start)
 			total_expected = total_expected + expected
-			print(time_end, time_start,time_end - time_start, window[0].density,len(collection[0]),total_expected)
+			print(index,time_end, time_start,time_end - time_start, window[0].density,len(collection[0]), len(window[1]),total_expected)
 		if (len(collection[0]) > total_expected):
 			All.append(collection)
+	print(len(All), "/", total_counted)
 	return(All)
 
 
