@@ -1,6 +1,6 @@
 #	create a funtion to calculate the solid angle of a region. The function takes 
-# 	an angle from the origin in degrees and returns the solid angle of that area
-def solid_angle(theta):
+# 	an angle from the origin in degrees and returns the solid angle in square degrees of that area
+def solid_angle(theta, type = "ster"):
 	import numpy as np 
 	import math
 
@@ -9,7 +9,12 @@ def solid_angle(theta):
 	#solid angle formula
 	d_omega = 2*np.pi*(1-np.cos(theta))
 
-	return(math.degrees(d_omega))	
+	if (type == "ster"):
+		return(d_omega)	
+	if (type == "deg"):
+		return(d_omega*(180/(np.pi))**2)
+	else:
+		return d_omega
 
 #	solid_angle_strip is a function which calculates the solid angle of a strip of sky.
 #	It takes in a scalar value dec1 which is the declination in degrees of the top vertical
@@ -20,7 +25,7 @@ def solid_angle(theta):
 #	changed if the user does not wish to find only the magnitude of the solid angle.
 #	The function uses the function solid_angle and will work for any given declinations.
 #	The function returns the solid angle of that strip.
-def solid_angle_strip(dec1, dec2, extent = 360, absolute = True):
+def solid_angle_strip(dec1, dec2, extent = 360, absolute = True, type = "ster"):
 	import numpy as np
 	import math
 
@@ -38,7 +43,12 @@ def solid_angle_strip(dec1, dec2, extent = 360, absolute = True):
 	if absolute:
 		d_omega = abs(d_omega)
 
-	return(d_omega)
+	if (type=="ster"):
+		return(d_omega)
+	if (type == "deg"):	
+		return(d_omega*(180/(np.pi))**2)
+	else:
+		return(d_omega)	
 
 ###	This will take an origin point and find all the points (pass as list) that are within max_angle of them
 ###	Returns a list of all the points. Iterate over the list if you want to do stuff with them.

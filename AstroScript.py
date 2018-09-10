@@ -175,7 +175,7 @@ def process_all_files():
 		process_the_file(file)
 
 	global TOTAL_AREA	
-	TOTAL_AREA = solid_angle(MAX_SEP.value)
+	TOTAL_AREA = solid_angle(MAX_SEP.value,type="deg")
 
 
 def plot():
@@ -210,7 +210,7 @@ def test_window_search():
 			time_end = min(collection[2], window[0].end)
 			if time_start > time_end or time_end < time_start:
 				continue
-			expected = TOTAL_AREA * window[0].density * (time_end-time_start)
+			expected = TOTAL_AREA * window[0].density * (time_end-time_start)/(window[0].end - window[0].start)
 			total_expected = total_expected + expected
 			print(index,time_end, time_start,time_end - time_start, window[0].density,len(collection[0]), len(window[1]),total_expected)
 		if (len(collection[0]) > total_expected):
