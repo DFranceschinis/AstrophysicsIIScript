@@ -1,6 +1,6 @@
 #	create a funtion to calculate the solid angle of a region. The function takes 
-# 	an angle from the origin in degrees and returns the solid angle of that area
-def solid_angle(theta):
+# 	an angle from the origin in degrees and returns the solid angle in square degrees of that area
+def solid_angle(theta, type = "ster"):
 	import numpy as np 
 	import math
 
@@ -9,7 +9,12 @@ def solid_angle(theta):
 	#solid angle formula
 	d_omega = 2*np.pi*(1-np.cos(theta))
 
-	return(d_omega)	
+	if (type == "ster"):
+		return(d_omega)	
+	if (type == "deg"):
+		return(d_omega*(180/(np.pi))**2)
+	else:
+		return d_omega
 
 #	solid_angle_strip is a function which calculates the solid angle of a strip of sky.
 #	It takes in a scalar value dec1 which is the declination in degrees of the top vertical
@@ -20,7 +25,7 @@ def solid_angle(theta):
 #	changed if the user does not wish to find only the magnitude of the solid angle.
 #	The function uses the function solid_angle and will work for any given declinations.
 #	The function returns the solid angle of that strip.
-def solid_angle_strip(dec1, dec2, extent = 360, absolute = True):
+def solid_angle_strip(dec1, dec2, extent = 360, absolute = True, type = "ster"):
 	import numpy as np
 	import math
 
@@ -38,7 +43,12 @@ def solid_angle_strip(dec1, dec2, extent = 360, absolute = True):
 	if absolute:
 		d_omega = abs(d_omega)
 
-	return(d_omega)
+	if (type=="ster"):
+		return(d_omega)
+	if (type == "deg"):	
+		return(d_omega*(180/(np.pi))**2)
+	else:
+		return(d_omega)	
 
 ###	This will take an origin point and find all the points (pass as list) that are within max_angle of them
 ###	Returns a list of all the points. Iterate over the list if you want to do stuff with them.
@@ -135,10 +145,21 @@ def poisson_prob(num_events,background):
 	import numpy as np
 	import math
 	
-	P_prob = ((background**n)/(math.factorial(n)))*np.exp(-background)
+	P_prob = ((background**num_events)/(math.factorial(num_events)))*np.exp(-background)
 
 	return P_prob
-			
+
+
+#	A function that calculates the poisson probability for finding a number of events GREATER THAN or
+#	EQUAL TO a given value Num_events. It will use the function poisson_prob() and sum over numbers up
+#	to Num_events and will subtract these from one.
+def summed_poisson_prob(Num_events, background):
+
+	Prob = sum([poisson_prob(s, background) for s in range(Num_events)])
+
+	summed_P_prob = 1 - Prob	
+
+	return summed_P_prob		
 
 
 ###	Split a list of points into sublists that are split according to time intervals
@@ -155,3 +176,16 @@ def event_density_windows(point_list, window_list):
 				new_list.append(point)
 		final_list.append((window, new_list))
 	return final_list
+
+
+#	Create 1257 randomised 'event times' in MJD which fit in the range of the
+#	first measuring day and the last measuring day. It takes in the start date
+#	in MJD of neutrino measurements at IceCube and the end date of measurements 
+#	relevant to the data set.
+
+def random_event_time(measuring_start, measuring_end):
+	import random
+
+	randomTime = random.uniform(measuring_start, measuring_end)
+
+	return randomTime	

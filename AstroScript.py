@@ -72,6 +72,9 @@
 ### Useful functions that we will regularly use go in this file. This is mainly for organisational purposes.
 
 from useful_functions import *
+import datetime	
+import astropy
+from astropy.time import Time
 
 ### Set up the location of the files. Make sure the files are in the same directory as this script.
 
@@ -96,17 +99,23 @@ NAMES.append("events_IC86c.txt")
 ORIGIN_RA = 77.3582
 ORIGIN_DEC = 5.69314
 
+MAX_SEP = 0
+TOTAL_AREA = 0
+
 ### Class for the data points
 
 class neutrino(object):
 
 	def __init__(self, MJD, RA, DEC, UNC, ENERGY):
+		global MAX_SEP
 		self.MJD = MJD
 		self.RA = RA
 		self.DEC = DEC
 		self.UNC = UNC
 		self.ENERGY = ENERGY
 		self.separation = find_angular_separation(ORIGIN_RA, ORIGIN_DEC, self.RA, self.DEC)
+		if self.separation > MAX_SEP:
+			MAX_SEP = self.separation
 
 	# def __repr__(self):
 	#     return ''.join("Neutrino Data Point: ","\tMJD: ",self.MJD,"\tRA: ",self.RA,"\tDEC",self.DEC,"\tUNC",self.UNC,"ENERGY: ",self.log10)
@@ -115,9 +124,7 @@ class neutrino(object):
 class measure_period(object):
 
 	def __init__(self,line):
-		import datetime	
-		import astropy
-		from astropy.time import Time
+		
 
 		self.line = line
 		name, st_yr, st_mth, st_day, end_yr, end_mth, end_day, density, _, error = line.strip().split()
@@ -126,7 +133,7 @@ class measure_period(object):
 		start  = datetime.datetime.strptime(st_date, '%Y%b%d')
 		end = datetime.datetime.strptime(end_date, '%Y%b%d')
 		self.start = Time(start, format='datetime').mjd
-		self.end = Time(start, format='datetime').mjd
+		self.end = Time(end, format='datetime').mjd
 		self.density = float(density)
 		self.error = (float(error[:-1]))/100
 
@@ -167,6 +174,9 @@ def process_all_files():
 	for file in NAMES:
 		process_the_file(file)
 
+	global TOTAL_AREA	
+	TOTAL_AREA = solid_angle(MAX_SEP.value,type="deg")
+
 
 def plot():
 	
@@ -181,23 +191,53 @@ def plot():
 	plt.ylabel("Energy [log10]")
 	plt.show()
 
+def window_search(Neutrino_list, Period_list, start_time, end_time, window_size, p_value)
+	###	This will search through all windows. It will test the p_values using the poisson distribution
+	###	and return all that are above a certain threshold
+	matching_collections = []
+	for collection in Time_window_searcher(start_time, end_time, window_size, Neutrino_list):
+		total_p_value = 1
+		for window in event_density_windows(Neutrino_list, Period_list):
+			###	Collection[1] is the start time of the collection, window[0].start is the start of this time block
+			###	Finding the max wwill find the lower bounds to determine the density
+			time_start = max(collection[1], window[0].start)
+			time_end = min(collection[2], window[0].end)
+
+			window_density = window[0].density * TOTAL_AREA * (time_end - time_start)/(window[0].end - window[0].start)
+			p_value = poisson_prob(len(window[1]), window_density)
+
+			total_p_value *= p_value #### 	I think this is how you can calculate it? Check with someone 
+									###		More knowledgable than me.
+
+		if (total_p_value <= p_value):
+			matching_collections.append(collection)
+
 
 def test_window_search():
 	###	This will collect the windows. I will now find the expected number per time window, and if
 	###	it is less than the actual number, print it.
-	for collection in Time_window_searcher(NEUTRINOS[0].MJD, NEUTRINOS[-1].MJD, TIME = 10, NEUTRINOS):
+	All = list()
+	total_counted = 0
+	for collection in Time_window_searcher(PERIODS[0].start, PERIODS[-1].end, 10000, NEUTRINOS):
+		print("I have a collection:", collection[1], collection[2])	#	This is working (apparently)
 		total_expected = 0
+		index = -1
+		total_counted += 1
 		for window in event_density_windows(NEUTRINOS, PERIODS):
+			index += 1
 			###	Collection[1] is the start time of the collection, window[0].start is the start of this time block
 			###	Finding the max will find the lower bounds to determine the density
 			time_start = max(collection[1], window[0].start)
 			time_end = min(collection[2], window[0].end)
-
-			expected = window[0].density * (time_end-time_start)
+			if time_start > time_end or time_end < time_start:
+				continue
+			expected = TOTAL_AREA * window[0].density * (time_end-time_start)/(window[0].end - window[0].start)
 			total_expected = total_expected + expected
+			print(index,time_end, time_start,time_end - time_start, window[0].density,len(collection[0]), len(window[1]),total_expected)
 		if (len(collection[0]) > total_expected):
-			print(collection)
-	
+			All.append(collection)
+	print(len(All), "/", total_counted)
+	return(All)
 
 
 
@@ -237,3 +277,50 @@ def run():
 #	This allows the code to run if you just use $ python AstroScript
 if __name__ == '__main__':
 	run()
+
+#	randomised_times creates an array of random 'event' times in MJD.
+def randomised_times():
+	starts = [st.start for st in PERIODS]
+	ends = [en.end for en in PERIODS]
+
+	events1 = 0
+	events2 = 0
+	events3 = 0
+	events4 = 0
+	events5 = 0
+	events6 = 0
+	overflow = 0
+	randomTimeArray = []
+
+	for event in NEUTRINOS:
+
+		if(event.MJD >= starts[0] and event.MJD <= ends[0]):
+			events1+=1
+		elif(event.MJD > starts[1] and event.MJD <= ends[1]):
+			events2+=1
+		elif(event.MJD > starts[2] and event.MJD <= ends[2]):
+			events3+=1
+		elif(event.MJD > starts[3] and event.MJD <= ends[3]):
+			events4+=1			
+		elif(event.MJD > starts[4] and event.MJD <= ends[4]):
+			events5+=1	
+		elif(event.MJD > starts[5] and event.MJD <= ends[5]):
+			events6+=1	
+		else:
+			overflow+=1	
+
+	for i in range(events1):	
+		randomTimeArray.append(random_event_time(starts[0],ends[0]))
+	for i in range(events2):
+		randomTimeArray.append(random_event_time(starts[1],ends[0]))
+	for i in range(events3):
+		randomTimeArray.append(random_event_time(starts[2],ends[2]))
+	for i in range(events4):
+		randomTimeArray.append(random_event_time(starts[3],ends[3]))
+	for i in range(events5):
+		randomTimeArray.append(random_event_time(starts[4],ends[4]))
+	for i in range(events6):
+		randomTimeArray.append(random_event_time(starts[5],ends[5]))				
+
+
+	return randomTimeArray	
