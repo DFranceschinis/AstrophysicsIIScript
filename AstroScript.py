@@ -141,19 +141,23 @@ class measure_period(object):
 
 NEUTRINOS = []
 PERIODS = []
+RANDNEUTRINOS = []
 
 ###
 
 def process_all_files():
 	""" This function will do all the data processing.
 	"""
+	global RANDNEUTRINOS
 
 	#   Note, this function is local to this function, thus it won't have a name conflict with other functions.
 
 	#   Clean up previous runs
-
+	print(RANDNEUTRINOS)
 	NEUTRINOS.clear()
 	PERIODS.clear()
+	RANDNEUTRINOS.clear()
+
 	def process(mylist, lines, number):
 		for i in lines:
 			mylist.append(float((i.split())[number]))
@@ -164,6 +168,7 @@ def process_all_files():
 		for i in FILE:
 			M,R,D,U,l = i.strip().split()
 			NEUTRINOS.append(neutrino(float(M),float(R),float(D),float(U),float(l)))
+			RANDNEUTRINOS.append(neutrino(None,float(R),float(D),float(U),float(l)))
 		
 	FILE = open(os.path.join(__location__,"data/list_of_samples.txt")).readlines()
 	firstLine = FILE.pop(0)
@@ -177,6 +182,17 @@ def process_all_files():
 	global TOTAL_AREA	
 	TOTAL_AREA = solid_angle(MAX_SEP.value,type="deg")
 
+	#	Create a random time array to use for the randomised neutrino events
+	randomTimes = randomised_times()
+	print(len(randomTimes))
+	print(len(RANDNEUTRINOS))
+
+	#	Replace the None value in RANDNEUTRINOS with the randomised times 
+	for i in range(len(RANDNEUTRINOS)):
+		if(RANDNEUTRINOS[i].MJD == None):
+			RANDNEUTRINOS[i].MJD = randomTimes[i]
+		else:
+			print("uh oh")	
 
 def plot():
 	
@@ -299,6 +315,8 @@ def randomised_times():
 		else:
 			overflow+=1	
 
+		
+
 	for i in range(events1):	
 		randomTimeArray.append(random_event_time(starts[0],ends[0]))
 	for i in range(events2):
@@ -309,11 +327,13 @@ def randomised_times():
 		randomTimeArray.append(random_event_time(starts[3],ends[3]))
 	for i in range(events5):
 		randomTimeArray.append(random_event_time(starts[4],ends[4]))
-	for i in range(events6):
+	for i in range(events6+overflow):
 		randomTimeArray.append(random_event_time(starts[5],ends[5]))				
 
 
 	return randomTimeArray	
+
+
 
 
 #	Function to create a histogram of the log of the probabilities
