@@ -192,7 +192,7 @@ def plot():
 	
 
 def search_multiple_windows(Neutrino_list, Period_list, start_time, end_time, delta_t, window_size_list, p_value, window_density):
-
+	pass
 
 def window_search_simple(Neutrino_list, Period_list, start_time, end_time, delta_t, window_size, p_value, window_density):
 	matching_collections = []
