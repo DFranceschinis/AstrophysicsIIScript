@@ -267,18 +267,6 @@ def sky_map():
 	fig2.colorbar(smap, cax=cax, orientation='vertical', label='Energy')
 	    
 
-### run this function to actually DO the stuff.
-def run():
-	import matplotlib.pyplot as plt
-
-	process_all_files()
-	plot()
-	sky_map()
-	plt.show()
-
-#	This allows the code to run if you just use $ python AstroScript
-if __name__ == '__main__':
-	run()
 
 #	randomised_times creates an array of random 'event' times in MJD.
 def randomised_times():
@@ -343,3 +331,16 @@ def prob_histogram(probabilities):
 	ax.set(title="Log10 of the Probabilities",xlabel="log(P)")
 	
 
+
+### run this function to actually DO the stuff.
+def run():
+	import matplotlib.pyplot as plt
+
+	process_all_files()
+	plot()
+	sky_map()
+	plt.show()
+
+#	This allows the code to run if you just use $ python AstroScript
+if __name__ == '__main__':
+	run()
