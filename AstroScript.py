@@ -185,11 +185,11 @@ def plot():
 	MJD = [neut.MJD for neut in NEUTRINOS]
 	EN = [neut.ENERGY for neut in NEUTRINOS]
 
-	plt.scatter(MJD, EN)
-	plt.title("Energy vs MJD")
-	plt.xlabel("MJD")
-	plt.ylabel("Energy [log10]")
-	plt.show()
+	fig1 = plt.figure(1)
+	ax = fig1.add_subplot(111)
+	ax.scatter(MJD, EN)
+	ax.set(title="Energy vs MJD",xlabel="MJD",ylabel="Energy [log10]")
+	
 
 def search_multiple_windows(Neutrino_list, Period_list, start_time, end_time, delta_t, window_size_list, p_value, window_density):
 
@@ -239,8 +239,8 @@ def sky_map():
 	coords = [(R, D) for R in RA for D in DEC]
 	
 
-	fig = plt.figure()
-	ax = fig.add_subplot(111)
+	fig2 = plt.figure(2)
+	ax = fig2.add_subplot(111)
 	divider = make_axes_locatable(ax)
 	cax = divider.append_axes('right', size='5%', pad=0.05)
 
@@ -248,19 +248,9 @@ def sky_map():
 	ax.plot(ORIGIN_RA, ORIGIN_DEC, 'ro', label='TXS0506+056')
 	ax.legend(loc="upper right")
 	ax.set(title='Right Ascension and Declination of Data Readings', xlabel='Right Ascension (Degrees)', ylabel='Declination (Degrees)')
-	fig.colorbar(smap, cax=cax, orientation='vertical', label='Energy')
-	plt.show()      
+	fig2.colorbar(smap, cax=cax, orientation='vertical', label='Energy')
+	    
 
-### run this function to actually DO the stuff.
-def run():
-
-	process_all_files()
-	plot()
-	sky_map()
-
-#	This allows the code to run if you just use $ python AstroScript
-if __name__ == '__main__':
-	run()
 
 #	randomised_times creates an array of random 'event' times in MJD.
 def randomised_times():
@@ -308,3 +298,33 @@ def randomised_times():
 
 
 	return randomTimeArray	
+
+
+#	Function to create a histogram of the log of the probabilities
+#	The function takes in an array of probability values and plots 
+#	a histogram of their log10 values.
+def prob_histogram(probabilities):
+	import matplotlib.pyplot as plt
+	import math
+
+	log_probs = [math.log10(p) for p in probabilities]
+
+	fig3 = plt.figure(3)
+	ax = fig.add_subplot(111)
+	ax.hist(log_probs,bins=20)
+	ax.set(title="Log10 of the Probabilities",xlabel="log(P)")
+	
+
+
+### run this function to actually DO the stuff.
+def run():
+	import matplotlib.pyplot as plt
+
+	process_all_files()
+	plot()
+	sky_map()
+	plt.show()
+
+#	This allows the code to run if you just use $ python AstroScript
+if __name__ == '__main__':
+	run()
