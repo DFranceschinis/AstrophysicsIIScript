@@ -108,11 +108,12 @@ def find_angular_separation(origin_RA, origin_DEC, point_RA, point_DEC):
 ###					# Do stuff with the window
 
 class Time_window_searcher(object):
-	def __init__(self, time_start, time_end, time_window_size, points):
+	def __init__(self, time_start, time_end, delta_t, time_window_size, points):
 		self.time_start = float(time_start)
 		self.time_end = float(time_end)
 		self.time_window_size = float(time_window_size)
 		self.points = points
+		self.delta_t = float(delta_t)
 
 	def __iter__(self):
 		###	This doesn't necessarily need to return self, but will for now.
@@ -121,16 +122,18 @@ class Time_window_searcher(object):
 		return self
 
 	def __next__(self):
-		if self.cur_start >= self.time_end:
+		###	There's going to be a bug here
+		###	This doesn't properly handle the overlap with the end
+		if self.cur_end > self.time_end:
 			raise StopIteration
-		if self.cur_end >= self.time_end:
+		if self.time_end - self.cur_end < self.delta_t and self.time_end - self.cur_end > 0:
 			###	This implementation detail is probably best
-			self.cur_end = self.time_end
+			print("The time difference to the end time is less than the delta_t! This may cause problems!", self.time_end, self.cur_end, self.time_end - self.cur_end, self.delta_t)
 
 		window = find_points_in_time_window(self.cur_start, self.cur_end, self.points)
 		start = self.cur_start
 		end = self.cur_end
-		self.cur_start, self.cur_end = self.cur_end, self.cur_end + self.time_window_size
+		self.cur_start, self.cur_end = self.cur_start + self.delta_t, self.cur_end + self.delta_t
 		return (window, start, end)
 
 

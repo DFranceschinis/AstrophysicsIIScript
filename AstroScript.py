@@ -117,8 +117,8 @@ class neutrino(object):
 		if self.separation > MAX_SEP:
 			MAX_SEP = self.separation
 
-	# def __repr__(self):
-	#     return ''.join("Neutrino Data Point: ","\tMJD: ",self.MJD,"\tRA: ",self.RA,"\tDEC",self.DEC,"\tUNC",self.UNC,"ENERGY: ",self.log10)
+	def __repr__(self):
+	     return "Neutrino " + str(self.MJD)
 
 #	class to hold the information of each of the measuring periods of IceCube
 class measure_period(object):
@@ -191,54 +191,38 @@ def plot():
 	plt.ylabel("Energy [log10]")
 	plt.show()
 
-def window_search(Neutrino_list, Period_list, start_time, end_time, window_size, p_value)
+def search_multiple_windows(Neutrino_list, Period_list, start_time, end_time, delta_t, window_size_list, p_value, window_density):
+
+
+def window_search_simple(Neutrino_list, Period_list, start_time, end_time, delta_t, window_size, p_value, window_density):
+	matching_collections = []
+	for collection in Time_window_searcher(start_time, end_time, delta_t, window_size, Neutrino_list):
+		density = window_density * TOTAL_AREA * (collection[2] - collection[1])/(end_time - start_time)
+		total_p_value = poisson_prob(len(collection[0]), density)
+		if (len(collection[0]) > 0 and total_p_value <= p_value):
+			matching_collections.append((collection[0], collection[1], collection[2], total_p_value))
+	return(matching_collections)
+
+def window_search(Neutrino_list, Period_list, start_time, end_time, delta_t, window_size, p_value):
 	###	This will search through all windows. It will test the p_values using the poisson distribution
 	###	and return all that are above a certain threshold
 	matching_collections = []
-	for collection in Time_window_searcher(start_time, end_time, window_size, Neutrino_list):
+	for collection in Time_window_searcher(start_time, end_time, delta_t, window_size, Neutrino_list):
 		total_p_value = 1
-		for window in event_density_windows(Neutrino_list, Period_list):
+		for window in event_density_windows(collection[0], Period_list):
 			###	Collection[1] is the start time of the collection, window[0].start is the start of this time block
 			###	Finding the max wwill find the lower bounds to determine the density
 			time_start = max(collection[1], window[0].start)
 			time_end = min(collection[2], window[0].end)
-
-			window_density = window[0].density * TOTAL_AREA * (time_end - time_start)/(window[0].end - window[0].start)
-			p_value = poisson_prob(len(window[1]), window_density)
-
-			total_p_value *= p_value #### 	I think this is how you can calculate it? Check with someone 
-									###		More knowledgable than me.
-
-		if (total_p_value <= p_value):
-			matching_collections.append(collection)
-
-
-def test_window_search():
-	###	This will collect the windows. I will now find the expected number per time window, and if
-	###	it is less than the actual number, print it.
-	All = list()
-	total_counted = 0
-	for collection in Time_window_searcher(PERIODS[0].start, PERIODS[-1].end, 10000, NEUTRINOS):
-		print("I have a collection:", collection[1], collection[2])	#	This is working (apparently)
-		total_expected = 0
-		index = -1
-		total_counted += 1
-		for window in event_density_windows(NEUTRINOS, PERIODS):
-			index += 1
-			###	Collection[1] is the start time of the collection, window[0].start is the start of this time block
-			###	Finding the max will find the lower bounds to determine the density
-			time_start = max(collection[1], window[0].start)
-			time_end = min(collection[2], window[0].end)
 			if time_start > time_end or time_end < time_start:
 				continue
-			expected = TOTAL_AREA * window[0].density * (time_end-time_start)/(window[0].end - window[0].start)
-			total_expected = total_expected + expected
-			print(index,time_end, time_start,time_end - time_start, window[0].density,len(collection[0]), len(window[1]),total_expected)
-		if (len(collection[0]) > total_expected):
-			All.append(collection)
-	print(len(All), "/", total_counted)
-	return(All)
-
+			window_density = window[0].density * TOTAL_AREA * (time_end - time_start)/(window[0].end - window[0].start)
+			p_value_window = poisson_prob(len(window[1]), window_density)
+			total_p_value *= p_value_window #### 	I think this is how you can calculate it? Check with someone 
+									###		More knowledgable than me.
+		if (len(collection[0]) > 0 and total_p_value <= p_value):
+			matching_collections.append((collection[0], collection[1],collection[2],total_p_value))
+	return(matching_collections)
 
 
 
