@@ -3,6 +3,7 @@ import os
 import matplotlib.pyplot as plt
 import math
 from useful_functions import *
+from windowsearch import *
 
 
 __location__ = os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__)))
