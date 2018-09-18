@@ -72,6 +72,7 @@
 ### Useful functions that we will regularly use go in this file. This is mainly for organisational purposes.
 
 from useful_functions import *
+import windowsearch as ws
 import datetime	
 import astropy
 from astropy.time import Time
@@ -118,8 +119,8 @@ class neutrino(object):
 		if self.separation > MAX_SEP:
 			MAX_SEP = self.separation
 
-	# def __repr__(self):
-	#     return ''.join("Neutrino Data Point: ","\tMJD: ",self.MJD,"\tRA: ",self.RA,"\tDEC",self.DEC,"\tUNC",self.UNC,"ENERGY: ",self.log10)
+	def __repr__(self):
+	     return "Neutrino " + str(self.MJD)
 
 #	class to hold the information of each of the measuring periods of IceCube
 class measure_period(object):
@@ -142,19 +143,23 @@ class measure_period(object):
 
 NEUTRINOS = []
 PERIODS = []
+RANDNEUTRINOS = []
 
 ###
 
 def process_all_files():
 	""" This function will do all the data processing.
 	"""
+	global RANDNEUTRINOS
 
 	#   Note, this function is local to this function, thus it won't have a name conflict with other functions.
 
 	#   Clean up previous runs
-
+	print(RANDNEUTRINOS)
 	NEUTRINOS.clear()
 	PERIODS.clear()
+	RANDNEUTRINOS.clear()
+
 	def process(mylist, lines, number):
 		for i in lines:
 			mylist.append(float((i.split())[number]))
@@ -165,6 +170,7 @@ def process_all_files():
 		for i in FILE:
 			M,R,D,U,l = i.strip().split()
 			NEUTRINOS.append(neutrino(float(M),float(R),float(D),float(U),float(l)))
+			RANDNEUTRINOS.append(neutrino(None,float(R),float(D),float(U),float(l)))
 		
 	FILE = open(os.path.join(__location__,"data/list_of_samples.txt")).readlines()
 	firstLine = FILE.pop(0)
@@ -176,8 +182,20 @@ def process_all_files():
 		process_the_file(file)
 
 	global TOTAL_AREA	
-	TOTAL_AREA = solid_angle(MAX_SEP.value)
-	
+
+	TOTAL_AREA = solid_angle(MAX_SEP.value,type="deg")
+
+	#	Create a random time array to use for the randomised neutrino events
+	randomTimes = randomised_times()
+	print(len(randomTimes))
+	print(len(RANDNEUTRINOS))
+
+	#	Replace the None value in RANDNEUTRINOS with the randomised times 
+	for i in range(len(RANDNEUTRINOS)):
+		if(RANDNEUTRINOS[i].MJD == None):
+			RANDNEUTRINOS[i].MJD = randomTimes[i]
+		else:
+			print("uh oh")	
 
 def plot():
 	
@@ -186,33 +204,11 @@ def plot():
 	MJD = [neut.MJD for neut in NEUTRINOS]
 	EN = [neut.ENERGY for neut in NEUTRINOS]
 
-	plt.scatter(MJD, EN)
-	plt.title("Energy vs MJD")
-	plt.xlabel("MJD")
-	plt.ylabel("Energy [log10]")
-	plt.show()
-
-
-def test_window_search():
-	###	This will collect the windows. I will now find the expected number per time window, and if
-	###	it is less than the actual number, print it.
-	All = list()
-	for collection in Time_window_searcher(NEUTRINOS[0].MJD, NEUTRINOS[-1].MJD, 1000, NEUTRINOS):
-		total_expected = 0
-		for window in event_density_windows(NEUTRINOS, PERIODS):
-			###	Collection[1] is the start time of the collection, window[0].start is the start of this time block
-			###	Finding the max will find the lower bounds to determine the density
-			time_start = max(collection[1], window[0].start)
-			time_end = min(collection[2], window[0].end)
-
-			expected = TOTAL_AREA * window[0].density * (time_end-time_start)
-			total_expected = total_expected + expected
-			print(time_end, time_start,time_end - time_start, window[0].density,len(collection[0]),total_expected)
-		if (len(collection[0]) > total_expected):
-			All.append(collection)
-	return(All)
-
-
+	fig1 = plt.figure(1)
+	ax = fig1.add_subplot(111)
+	ax.scatter(MJD, EN)
+	ax.set(title="Energy vs MJD",xlabel="MJD",ylabel="Energy [log10]")
+	
 
 
 
@@ -228,8 +224,8 @@ def sky_map():
 	coords = [(R, D) for R in RA for D in DEC]
 	
 
-	fig = plt.figure()
-	ax = fig.add_subplot(111)
+	fig2 = plt.figure(2)
+	ax = fig2.add_subplot(111)
 	divider = make_axes_locatable(ax)
 	cax = divider.append_axes('right', size='5%', pad=0.05)
 
@@ -237,21 +233,11 @@ def sky_map():
 	ax.plot(ORIGIN_RA, ORIGIN_DEC, 'ro', label='TXS0506+056')
 	ax.legend(loc="upper right")
 	ax.set(title='Right Ascension and Declination of Data Readings', xlabel='Right Ascension (Degrees)', ylabel='Declination (Degrees)')
-	fig.colorbar(smap, cax=cax, orientation='vertical', label='Energy')
-	plt.show()      
-
-### run this function to actually DO the stuff.
-def run():
-
-	process_all_files()
-	plot()
-	sky_map()
-
-#	This allows the code to run if you just use $ python AstroScript
-if __name__ == '__main__':
-	run()
+	fig2.colorbar(smap, cax=cax, orientation='vertical', label='Energy')
+	    
 
 
+#	randomised_times creates an array of random 'event' times in MJD.
 def randomised_times():
 	starts = [st.start for st in PERIODS]
 	ends = [en.end for en in PERIODS]
@@ -282,6 +268,8 @@ def randomised_times():
 		else:
 			overflow+=1	
 
+		
+
 	for i in range(events1):	
 		randomTimeArray.append(random_event_time(starts[0],ends[0]))
 	for i in range(events2):
@@ -292,8 +280,43 @@ def randomised_times():
 		randomTimeArray.append(random_event_time(starts[3],ends[3]))
 	for i in range(events5):
 		randomTimeArray.append(random_event_time(starts[4],ends[4]))
-	for i in range(events6):
+	for i in range(events6+overflow):
 		randomTimeArray.append(random_event_time(starts[5],ends[5]))				
 
 
 	return randomTimeArray	
+<<<<<<< HEAD
+=======
+
+
+
+
+#	Function to create a histogram of the log of the probabilities
+#	The function takes in an array of probability values and plots 
+#	a histogram of their log10 values.
+def prob_histogram(probabilities):
+	import matplotlib.pyplot as plt
+	import math
+
+	log_probs = [math.log10(p) for p in probabilities]
+
+	fig3 = plt.figure(3)
+	ax = fig.add_subplot(111)
+	ax.hist(log_probs,bins=20)
+	ax.set(title="Log10 of the Probabilities",xlabel="log(P)")
+	
+
+
+### run this function to actually DO the stuff.
+def run():
+	import matplotlib.pyplot as plt
+
+	process_all_files()
+	plot()
+	sky_map()
+	plt.show()
+
+#	This allows the code to run if you just use $ python AstroScript
+if __name__ == '__main__':
+	run()
+>>>>>>> experimenting

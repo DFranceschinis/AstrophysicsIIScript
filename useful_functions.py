@@ -1,6 +1,6 @@
 #	create a funtion to calculate the solid angle of a region. The function takes 
-# 	an angle from the origin in degrees and returns the solid angle of that area
-def solid_angle(theta):
+# 	an angle from the origin in degrees and returns the solid angle in square degrees of that area
+def solid_angle(theta, type = "ster"):
 	import numpy as np 
 	import math
 
@@ -9,7 +9,12 @@ def solid_angle(theta):
 	#solid angle formula
 	d_omega = 2*np.pi*(1-np.cos(theta))
 
-	return(d_omega)	
+	if (type == "ster"):
+		return(d_omega)	
+	if (type == "deg"):
+		return(d_omega*(180/(np.pi))**2)
+	else:
+		return d_omega
 
 #	solid_angle_strip is a function which calculates the solid angle of a strip of sky.
 #	It takes in a scalar value dec1 which is the declination in degrees of the top vertical
@@ -20,7 +25,7 @@ def solid_angle(theta):
 #	changed if the user does not wish to find only the magnitude of the solid angle.
 #	The function uses the function solid_angle and will work for any given declinations.
 #	The function returns the solid angle of that strip.
-def solid_angle_strip(dec1, dec2, extent = 360, absolute = True):
+def solid_angle_strip(dec1, dec2, extent = 360, absolute = True, type = "ster"):
 	import numpy as np
 	import math
 
@@ -38,7 +43,12 @@ def solid_angle_strip(dec1, dec2, extent = 360, absolute = True):
 	if absolute:
 		d_omega = abs(d_omega)
 
-	return(d_omega)
+	if (type=="ster"):
+		return(d_omega)
+	if (type == "deg"):	
+		return(d_omega*(180/(np.pi))**2)
+	else:
+		return(d_omega)	
 
 ###	This will take an origin point and find all the points (pass as list) that are within max_angle of them
 ###	Returns a list of all the points. Iterate over the list if you want to do stuff with them.
@@ -98,11 +108,12 @@ def find_angular_separation(origin_RA, origin_DEC, point_RA, point_DEC):
 ###					# Do stuff with the window
 
 class Time_window_searcher(object):
-	def __init__(self, time_start, time_end, time_window_size, points):
+	def __init__(self, time_start, time_end, delta_t, time_window_size, points):
 		self.time_start = float(time_start)
 		self.time_end = float(time_end)
 		self.time_window_size = float(time_window_size)
 		self.points = points
+		self.delta_t = float(delta_t)
 
 	def __iter__(self):
 		###	This doesn't necessarily need to return self, but will for now.
@@ -111,16 +122,18 @@ class Time_window_searcher(object):
 		return self
 
 	def __next__(self):
-		if self.cur_start >= self.time_end:
+		###	There's going to be a bug here
+		###	This doesn't properly handle the overlap with the end
+		if self.cur_end > self.time_end:
 			raise StopIteration
-		if self.cur_end >= self.time_end:
+		if self.time_end - self.cur_end < self.delta_t and self.time_end - self.cur_end > 0:
 			###	This implementation detail is probably best
-			self.cur_end = self.time_end
+			print("The time difference to the end time is less than the delta_t! This may cause problems!", self.time_end, self.cur_end, self.time_end - self.cur_end, self.delta_t)
 
 		window = find_points_in_time_window(self.cur_start, self.cur_end, self.points)
 		start = self.cur_start
 		end = self.cur_end
-		self.cur_start, self.cur_end = self.cur_end, self.cur_end + self.time_window_size
+		self.cur_start, self.cur_end = self.cur_start + self.delta_t, self.cur_end + self.delta_t
 		return (window, start, end)
 
 
@@ -135,10 +148,21 @@ def poisson_prob(num_events,background):
 	import numpy as np
 	import math
 	
-	P_prob = ((background**n)/(math.factorial(n)))*np.exp(-background)
+	P_prob = ((background**num_events)/(math.factorial(num_events)))*np.exp(-background)
 
 	return P_prob
-			
+
+
+#	A function that calculates the poisson probability for finding a number of events GREATER THAN or
+#	EQUAL TO a given value Num_events. It will use the function poisson_prob() and sum over numbers up
+#	to Num_events and will subtract these from one.
+def summed_poisson_prob(Num_events, background):
+
+	Prob = sum([poisson_prob(s, background) for s in range(Num_events)])
+
+	summed_P_prob = 1 - Prob	
+
+	return summed_P_prob		
 
 
 ###	Split a list of points into sublists that are split according to time intervals
