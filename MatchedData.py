@@ -66,16 +66,16 @@ Ws = [p.weight for p in WeightedSUBSET]
 # plt.show()
 
 
-B = list(find_points_in_time_window(56067.076728,57159.599401, AstroScript.NEUTRINOS))
+# B = list(find_points_in_time_window(56067.076728,57159.599401, AstroScript.NEUTRINOS))
 
-BEnergy = [N.ENERGY for N in B]
+# BEnergy = [N.ENERGY for N in B]
 
-plt.hist(BEnergy, 10, histtype='bar', align='mid', orientation='vertical')
+# plt.hist(BEnergy, 10, histtype='bar', align='mid', orientation='vertical')
 
-a = plt.hist(BEnergy, 10, histtype='bar', align='mid', orientation='vertical')
-print(a)
+# a = plt.hist(BEnergy, 10, histtype='bar', align='mid', orientation='vertical')
+# print(a)
 
-plt.show()
+# plt.show()
 
 
 # Exponential = 2*math.pi*math.pow(p.UNC,2)*math.exp((math.pow(p.separation.value,2))/(2*(math.pow(p.UNC,2))))

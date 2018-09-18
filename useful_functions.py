@@ -74,18 +74,6 @@ def find_points_in_strip(theta1, theta2, points):
 
 	return matches
 
-###	This will find any points within a time window.
-###	This maybe work with rearranging the points in strip function but oh well
-###	This takes a start time, an end time, and the array of points.
-def find_points_in_time_window(timestart, timeend, points):
-	matches = []
-
-	for p in points:
-		if (p.MJD >= timestart) and (p.MJD <= timeend):
-			matches.append(p)
-
-	return matches
-
 ###	Finds the angular separation between two points.
 ###	Fairly self documenting.
 def find_angular_separation(origin_RA, origin_DEC, point_RA, point_DEC):
@@ -98,43 +86,6 @@ def find_angular_separation(origin_RA, origin_DEC, point_RA, point_DEC):
 
 	return origin_coord.separation(point_coord)
 
-###	This class will allow you to iterate over every time window
-###	Instead of returning all the time windows (which would suck),
-###	it does each calculation every time you call next
-###	You should work with this by making it a variable
-### and then looping over the variable
-### ex:		windows = Time_window_searcher(start, end, size, points)
-###			for win in windows:
-###					# Do stuff with the window
-
-class Time_window_searcher(object):
-	def __init__(self, time_start, time_end, delta_t, time_window_size, points):
-		self.time_start = float(time_start)
-		self.time_end = float(time_end)
-		self.time_window_size = float(time_window_size)
-		self.points = points
-		self.delta_t = float(delta_t)
-
-	def __iter__(self):
-		###	This doesn't necessarily need to return self, but will for now.
-		self.cur_start = self.time_start
-		self.cur_end = self.time_start + self.time_window_size
-		return self
-
-	def __next__(self):
-		###	There's going to be a bug here
-		###	This doesn't properly handle the overlap with the end
-		if self.cur_end > self.time_end:
-			raise StopIteration
-		if self.time_end - self.cur_end < self.delta_t and self.time_end - self.cur_end > 0:
-			###	This implementation detail is probably best
-			print("The time difference to the end time is less than the delta_t! This may cause problems!", self.time_end, self.cur_end, self.time_end - self.cur_end, self.delta_t)
-
-		window = find_points_in_time_window(self.cur_start, self.cur_end, self.points)
-		start = self.cur_start
-		end = self.cur_end
-		self.cur_start, self.cur_end = self.cur_start + self.delta_t, self.cur_end + self.delta_t
-		return (window, start, end)
 
 
 #	poisson_prob(num_events,background) gives the probability as given by a Poisson distribution of 
@@ -164,21 +115,6 @@ def summed_poisson_prob(Num_events, background):
 
 	return summed_P_prob		
 
-
-###	Split a list of points into sublists that are split according to time intervals
-###	that are described by the event density windows that are processed seperately.
-###	It returns a list of tuples. Each of these tuples contains the time window (so you can find the density),
-###	and a list of all points in that time window
-
-def event_density_windows(point_list, window_list):
-	final_list = list()
-	for window in window_list:
-		new_list = list()
-		for point in point_list:
-			if (point.MJD >= window.start and point.MJD <= window.end):
-				new_list.append(point)
-		final_list.append((window, new_list))
-	return final_list
 
 
 #	Create 1257 randomised 'event times' in MJD which fit in the range of the
