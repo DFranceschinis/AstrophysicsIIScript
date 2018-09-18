@@ -285,8 +285,6 @@ def randomised_times():
 
 
 	return randomTimeArray	
-<<<<<<< HEAD
-=======
 
 
 
@@ -319,4 +317,3 @@ def run():
 #	This allows the code to run if you just use $ python AstroScript
 if __name__ == '__main__':
 	run()
->>>>>>> experimenting
