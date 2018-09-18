@@ -15,13 +15,13 @@ class Collection(object):
 		self.points = points
 		self.total_num_points = total_num_points
 		self.total_time = total_time
-		self.liklihood = 1
+		self.liklihood = 0
 		self.ns = 0
-		self.TS = 1
+		self.TS = 0
 		self.p_value = 1
 
-	def __repr__(self):
-		return ("Mid time: " + str(self.midTime) + " Width:" +  str(self.width) + " # Points:"  + str(len(self.points)) + " p_value" + str(self.p_value))
+	#def __repr__(self):
+#		return ("Mid time: " + str(self.midTime) + " Width:" +  str(self.width) + " # Points:"  + str(len(self.points)) )
 
 
 
@@ -98,13 +98,13 @@ def event_density_windows(point_list, window_list):
 	return final_list
 
 
-def search_multiple_windows(Neutrino_list, Period_list, start_time, end_time, delta_t, window_size_list, p_value, window_density, area):
+def search_multiple_windows_box(Neutrino_list, Period_list, start_time, end_time, delta_t, window_size_list, p_value, window_density, area):
 	least_p_valued_collection = Collection()
 	# least_p_valued_collection.p_value *= 100000
 
 	for size in window_size_list:
 		print(size)
-		collection = window_search_simple(Neutrino_list, Period_list, start_time, end_time,delta_t, size, p_value, window_density, area)
+		collection = window_search_simple_box(Neutrino_list, Period_list, start_time, end_time,delta_t, size, p_value, window_density, area)
 		if (collection.p_value < least_p_valued_collection.p_value):
 			print("Success!", collection.p_value, least_p_valued_collection.p_value)
 			least_p_valued_collection = collection
@@ -112,7 +112,7 @@ def search_multiple_windows(Neutrino_list, Period_list, start_time, end_time, de
 	return (least_p_valued_collection)
 
 ###	This will return the collection with the lowest p_value
-def window_search_simple(Neutrino_list, Period_list, start_time, end_time, delta_t, window_size, p_value, window_density, area):
+def window_search_simple_box(Neutrino_list, Period_list, start_time, end_time, delta_t, window_size, p_value, window_density, area):
 	matching_collection = Collection()
 
 	# matching_collection.p_value *= (end_time - start_time) / window_size
@@ -123,6 +123,35 @@ def window_search_simple(Neutrino_list, Period_list, start_time, end_time, delta
 
 		if (len(collection.points) > 0 and collection.p_value < matching_collection.p_value):
 			print("Success for Smaller!", collection.p_value, matching_collection.p_value)
+			matching_collection = collection
+	return(matching_collection)
+
+def search_multiple_windows_TS(Neutrino_list, Period_list, start_time, end_time, delta_t, window_size_list, p_value, window_density, area):
+	greatest_TS_valued_collection = Collection()
+	# least_p_valued_collection.p_value *= 100000
+
+	for size in window_size_list:
+		print(size)
+		collection = window_search_simple_box(Neutrino_list, Period_list, start_time, end_time,delta_t, size, p_value, window_density, area)
+		if (collection.TS > greatest_TS_valued_collection.TS):
+			print("Success!", collection.TS, greatest_TS_valued_collection.time_start)
+			greatest_TS_valued_collection = collection
+
+	return (greatest_TS_valued_collection)
+
+###	This will return the collection with the lowest p_value
+def window_search_simple_TS(Neutrino_list, Period_list, start_time, end_time, delta_t, window_size, p_value, window_density, area):
+	matching_collection = Collection()
+
+	# matching_collection.p_value *= (end_time - start_time) / window_size
+	for collection in Time_window_searcher(start_time, end_time, delta_t, window_size, Neutrino_list,len(Neutrino_list)):		
+		density = len(Neutrino_list) * (collection.end_time - collection.start_time)/(end_time - start_time)
+		liklihood(collection)
+		test_stat(collection)
+		# collection.p_value = summed_poisson_prob_new(len(collection.points), density) * (end_time - start_time) / window_size
+
+		if (len(collection.points) > 0 and collection.TS > matching_collection.TS):
+			print("Success for Smaller!", collection.TS, matching_collection.TS)
 			matching_collection = collection
 	return(matching_collection)
 

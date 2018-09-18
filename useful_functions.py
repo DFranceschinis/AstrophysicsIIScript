@@ -1,8 +1,9 @@
+import math
+import numpy as np
+
 #	create a funtion to calculate the solid angle of a region. The function takes 
 # 	an angle from the origin in degrees and returns the solid angle in square degrees of that area
 def solid_angle(theta, type = "ster"):
-	import numpy as np 
-	import math
 
 	theta = math.radians(theta)
 
@@ -26,8 +27,6 @@ def solid_angle(theta, type = "ster"):
 #	The function uses the function solid_angle and will work for any given declinations.
 #	The function returns the solid angle of that strip.
 def solid_angle_strip(dec1, dec2, extent = 360, absolute = True, type = "ster"):
-	import numpy as np
-	import math
 
 	formula = np.sign(dec1)*np.sign(dec2)
 
@@ -96,8 +95,6 @@ def find_angular_separation(origin_RA, origin_DEC, point_RA, point_DEC):
 #	occur independently of the space or time interval.
 #	The function returns a scalar value the probability for each given value of num_events events occuring.
 def poisson_prob(num_events,background):
-	import numpy as np
-	import math
 	
 	P_prob = ((background**num_events)/(math.factorial(num_events)))*np.exp(-background)
 
@@ -132,14 +129,33 @@ def random_event_time(measuring_start, measuring_end):
 
 
 #	A function to find the liklihood
-def liklihood(SonB,time_window_size,time_period,total_events,events_in_window):
-	import math
+def liklihood(collection):
 
-	N = total_events
-	ns = events_in_window
-	Ts = 1/(time_window_size)
-	Tb = 1/(time_period)
+	N = collection.total_num_points
+	Ts = 1/(collection.width)
+	Tb = 1/(collection.total_time)
+	maxL = 0
+	maxns = 0
+
+	for ns in range(0,N):
+		sum_of_logs = 0
+		for p in collection.points:
+			sum_of_logs += math.log((ns/N)*p.weight*Ts + (1-ns/N)*Tb)
+
+		L = math.exp(sum_of_logs)
+		if(L > maxL):
+			maxL = L
+			maxns = ns
+	collection.liklihood = maxL
+	collection.ns = maxns
+
+
+#	Function to calculate a collection's test statistic
+def test_stat(collection):
 	
-	logL = math.log10((ns/N)*SonB*Ts + (1-ns/N)*Tb)
-
-	L = 10**(#some sum of logL)	
+	Tw = collection.width
+	L = collection.liklihood
+	T = collection.total_time
+	N = collection.total_num_points
+	collection.TS = 2*(math.log(Tw) + math.log(L) - (N+1)*math.log(T))			
+	print(Tw,L,T,N,collection.TS)
