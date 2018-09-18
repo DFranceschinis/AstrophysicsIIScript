@@ -192,3 +192,18 @@ def random_event_time(measuring_start, measuring_end):
 	randomTime = random.uniform(measuring_start, measuring_end)
 
 	return randomTime	
+
+
+
+#	A function to find the liklihood
+def liklihood(SonB,time_window_size,time_period,total_events,events_in_window):
+	import math
+
+	N = total_events
+	ns = events_in_window
+	Ts = 1/(time_window_size)
+	Tb = 1/(time_period)
+	
+	logL = math.log10((ns/N)*SonB*Ts + (1-ns/N)*Tb)
+
+	L = 10**(#some sum of logL)	
