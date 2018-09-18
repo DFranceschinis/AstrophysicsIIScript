@@ -7,12 +7,17 @@ from scipy.stats import poisson
 ###	These are to simplify the data stores.
 
 class Collection(object):
-	def __init__(self, points = None, start = 0, end = 0):
+	def __init__(self, points = None, start = 0, end = 0, total_num_points = 58, total_time = 1097):
 		self.start_time = start
 		self.end_time = end
 		self.width = end - start
 		self.midTime = start  + (self.width / 2)
 		self.points = points
+		self.total_num_points = total_num_points
+		self.total_time = total_time
+		self.liklihood = 1
+		self.ns = 0
+		self.TS = 1
 		self.p_value = 1
 
 	def __repr__(self):
@@ -51,11 +56,12 @@ def summed_poisson_prob_new(Num_events, background):
 ###					# Do stuff with the window
 
 class Time_window_searcher(object):
-	def __init__(self, time_start, time_end, delta_t, time_window_size, points):
+	def __init__(self, time_start, time_end, delta_t, time_window_size, points, total_num_points):
 		self.time_start = float(time_start)
 		self.time_end = float(time_end)
 		self.time_window_size = float(time_window_size)
 		self.points = points
+		self.total_num_points = total_num_points
 		self.delta_t = float(delta_t)
 
 	def __iter__(self):
@@ -73,7 +79,7 @@ class Time_window_searcher(object):
 			###	This implementation detail is probably best
 			print("The time difference to the end time is less than the delta_t! This may cause problems!", self.time_end, self.cur_end, self.time_end - self.cur_end, self.delta_t)
 
-		collection = Collection(find_points_in_time_window(self.cur_start, self.cur_end, self.points), self.cur_start, self.cur_end)
+		collection = Collection(find_points_in_time_window(self.cur_start, self.cur_end, self.points), self.cur_start, self.cur_end, self.total_num_points, self.time_end-self.time_start)
 		self.cur_start, self.cur_end = self.cur_start + self.delta_t, self.cur_end + self.delta_t
 		return (collection)
 
@@ -123,7 +129,7 @@ def search_multiple_windows(Neutrino_list, Period_list, start_time, end_time, de
 def window_search_simple(Neutrino_list, Period_list, start_time, end_time, delta_t, window_size, p_value, window_density, area):
 	matching_collection = Collection()
 	matching_collection.p_value *= (end_time - start_time) / window_size
-	for collection in Time_window_searcher(start_time, end_time, delta_t, window_size, Neutrino_list):
+	for collection in Time_window_searcher(start_time, end_time, delta_t, window_size, Neutrino_list,len(Neutrino_list)):
 		density = window_density * area * (collection.end_time - collection.start_time)/(end_time - start_time)
 		# collection.p_value = poisson_prob(len(collection.points), density)
 		collection.p_value = summed_poisson_prob_new(len(collection.points), density) * (end_time - start_time) / window_size
