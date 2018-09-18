@@ -7,7 +7,7 @@ import MatchedData as MD
 
 print("Start:", AstroScript.PERIODS[-2].start, "End:", AstroScript.PERIODS[-2].end)
 
-A = ws.window_search_simple_TS(MD.WeightedSUBSET, AstroScript.PERIODS, AstroScript.PERIODS[-2].start, AstroScript.PERIODS[-2].end, 1, 100, .1, AstroScript.PERIODS[-2].density, AstroScript.TOTAL_AREA)
+A = ws.window_search_simple_TS(MD.WeightedSUBSET, AstroScript.PERIODS, AstroScript.PERIODS[-2].start, AstroScript.PERIODS[-2].end, 1, 10, .1, AstroScript.PERIODS[-2].density, AstroScript.TOTAL_AREA)
 
 print(A,A.TS,A.liklihood,A.ns)
 #print(MD.WeightedSUBSET)

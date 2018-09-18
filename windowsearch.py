@@ -146,8 +146,8 @@ def window_search_simple_TS(Neutrino_list, Period_list, start_time, end_time, de
 	# matching_collection.p_value *= (end_time - start_time) / window_size
 	for collection in Time_window_searcher(start_time, end_time, delta_t, window_size, Neutrino_list,len(Neutrino_list)):		
 		density = len(Neutrino_list) * (collection.end_time - collection.start_time)/(end_time - start_time)
-		liklihood(collection)
-		test_stat(collection)
+		liklihood(collection,Neutrino_list)
+		test_stat(collection,Neutrino_list)
 		# collection.p_value = summed_poisson_prob_new(len(collection.points), density) * (end_time - start_time) / window_size
 
 		if (len(collection.points) > 0 and collection.TS > matching_collection.TS):
