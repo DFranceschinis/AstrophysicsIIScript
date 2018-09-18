@@ -72,6 +72,7 @@
 ### Useful functions that we will regularly use go in this file. This is mainly for organisational purposes.
 
 from useful_functions import *
+import windowsearch as ws
 import datetime	
 import astropy
 from astropy.time import Time
@@ -190,40 +191,6 @@ def plot():
 	ax.scatter(MJD, EN)
 	ax.set(title="Energy vs MJD",xlabel="MJD",ylabel="Energy [log10]")
 	
-
-def search_multiple_windows(Neutrino_list, Period_list, start_time, end_time, delta_t, window_size_list, p_value, window_density):
-	pass
-
-def window_search_simple(Neutrino_list, Period_list, start_time, end_time, delta_t, window_size, p_value, window_density):
-	matching_collections = []
-	for collection in Time_window_searcher(start_time, end_time, delta_t, window_size, Neutrino_list):
-		density = window_density * TOTAL_AREA * (collection[2] - collection[1])/(end_time - start_time)
-		total_p_value = poisson_prob(len(collection[0]), density)
-		if (len(collection[0]) > 0 and total_p_value <= p_value):
-			matching_collections.append((collection[0], collection[1], collection[2], total_p_value))
-	return(matching_collections)
-
-def window_search(Neutrino_list, Period_list, start_time, end_time, delta_t, window_size, p_value):
-	###	This will search through all windows. It will test the p_values using the poisson distribution
-	###	and return all that are above a certain threshold
-	matching_collections = []
-	for collection in Time_window_searcher(start_time, end_time, delta_t, window_size, Neutrino_list):
-		total_p_value = 1
-		for window in event_density_windows(collection[0], Period_list):
-			###	Collection[1] is the start time of the collection, window[0].start is the start of this time block
-			###	Finding the max wwill find the lower bounds to determine the density
-			time_start = max(collection[1], window[0].start)
-			time_end = min(collection[2], window[0].end)
-			if time_start > time_end or time_end < time_start:
-				continue
-			window_density = window[0].density * TOTAL_AREA * (time_end - time_start)/(window[0].end - window[0].start)
-			p_value_window = poisson_prob(len(window[1]), window_density)
-			total_p_value *= p_value_window #### 	I think this is how you can calculate it? Check with someone 
-									###		More knowledgable than me.
-		if (len(collection[0]) > 0 and total_p_value <= p_value):
-			matching_collections.append((collection[0], collection[1],collection[2],total_p_value))
-	return(matching_collections)
-
 
 
 
