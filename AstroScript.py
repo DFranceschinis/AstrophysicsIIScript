@@ -114,6 +114,7 @@ class neutrino(object):
 		self.UNC = UNC
 		self.ENERGY = ENERGY
 		self.separation = find_angular_separation(ORIGIN_RA, ORIGIN_DEC, self.RA, self.DEC)
+		self.weight = 0
 		if self.separation > MAX_SEP:
 			MAX_SEP = self.separation
 
@@ -180,6 +181,7 @@ def process_all_files():
 		process_the_file(file)
 
 	global TOTAL_AREA	
+<<<<<<< HEAD
 	TOTAL_AREA = solid_angle(MAX_SEP.value,type="deg")
 
 	#	Create a random time array to use for the randomised neutrino events
@@ -193,6 +195,10 @@ def process_all_files():
 			RANDNEUTRINOS[i].MJD = randomTimes[i]
 		else:
 			print("uh oh")	
+=======
+	TOTAL_AREA = solid_angle(MAX_SEP.value)
+	
+>>>>>>> 0b2a430989f29a4e2b3bdc9dca3136e73df7ec0c
 
 def plot():
 	
@@ -316,6 +322,7 @@ def randomised_times():
 
 
 	return randomTimeArray	
+<<<<<<< HEAD
 
 
 
@@ -348,3 +355,5 @@ def run():
 #	This allows the code to run if you just use $ python AstroScript
 if __name__ == '__main__':
 	run()
+=======
+>>>>>>> 0b2a430989f29a4e2b3bdc9dca3136e73df7ec0c
