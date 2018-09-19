@@ -155,7 +155,6 @@ def process_all_files():
 	#   Note, this function is local to this function, thus it won't have a name conflict with other functions.
 
 	#   Clean up previous runs
-	print(RANDNEUTRINOS)
 	NEUTRINOS.clear()
 	PERIODS.clear()
 	RANDNEUTRINOS.clear()
@@ -187,8 +186,7 @@ def process_all_files():
 
 	#	Create a random time array to use for the randomised neutrino events
 	randomTimes = randomised_times()
-	print(len(randomTimes))
-	print(len(RANDNEUTRINOS))
+	
 
 	#	Replace the None value in RANDNEUTRINOS with the randomised times 
 	for i in range(len(RANDNEUTRINOS)):
