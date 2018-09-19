@@ -128,28 +128,25 @@ def window_search_simple_box(Neutrino_list, Period_list, start_time, end_time, d
 
 def search_multiple_windows_TS(Neutrino_list, Period_list, start_time, end_time, delta_t, window_size_list, p_value, window_density, area):
 	greatest_TS_valued_collection = Collection()
-	# least_p_valued_collection.p_value *= 100000
+	greatest_TS_valued_collection.TS = -100000000000
 
 	for size in window_size_list:
-		print(size)
-		collection = window_search_simple_box(Neutrino_list, Period_list, start_time, end_time,delta_t, size, p_value, window_density, area)
-		if (collection.TS > greatest_TS_valued_collection.TS):
-			print("Success!", collection.TS, greatest_TS_valued_collection.time_start)
+		print("----------	This is for window width: ",size,"-------------")
+		collection = window_search_simple_TS(Neutrino_list, Period_list, start_time, end_time,delta_t, size, p_value, window_density, area)
+		if (len(collection.points) > 0 and collection.TS > greatest_TS_valued_collection.TS):
+			print("Success!", collection.TS, greatest_TS_valued_collection.TS)
 			greatest_TS_valued_collection = collection
-
+		print("-----------------------------------------------------------")
 	return (greatest_TS_valued_collection)
 
 ###	This will return the collection with the lowest p_value
 def window_search_simple_TS(Neutrino_list, Period_list, start_time, end_time, delta_t, window_size, p_value, window_density, area):
 	matching_collection = Collection()
+	matching_collection.TS = -1000000000000	
 
-	# matching_collection.p_value *= (end_time - start_time) / window_size
 	for collection in Time_window_searcher(start_time, end_time, delta_t, window_size, Neutrino_list,len(Neutrino_list)):		
-		density = len(Neutrino_list) * (collection.end_time - collection.start_time)/(end_time - start_time)
 		liklihood(collection,Neutrino_list)
 		test_stat(collection,Neutrino_list)
-		# collection.p_value = summed_poisson_prob_new(len(collection.points), density) * (end_time - start_time) / window_size
-
 		if (len(collection.points) > 0 and collection.TS > matching_collection.TS):
 			print("Success for Smaller!", collection.TS, matching_collection.TS)
 			matching_collection = collection

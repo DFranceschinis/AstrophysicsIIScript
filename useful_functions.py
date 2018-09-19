@@ -130,37 +130,43 @@ def random_event_time(measuring_start, measuring_end):
 
 
 #	A function to find the liklihood
-def liklihood(collection,all_neutrinos, inc = 0.1):
-	print("I am calculating a liklihood!")
+def liklihood(collection,all_neutrinos, inc = 0.1, log = True):
 
 	N = collection.total_num_points
 	Ts = 1/(collection.width)
 	Tb = 1/(collection.total_time)
-	maxL = 0
+	maxL = math.log(10**-300)
 	maxns = 0
 
 	for ns in mit.numeric_range(0,N,inc):
 	
 		sum_of_logs = 0
-		sum_of_logs_leftover = (len(all_neutrinos) - N)*math.log((1-ns/N)*Tb)
+		sum_of_logs_leftover = (N - len(collection.points))*math.log((1-ns/N)*Tb)
+
+		product = 1
 		for p in collection.points:
 			sum_of_logs += math.log((ns/N)*p.weight*Ts + (1-ns/N)*Tb)
 
-		L = math.exp(sum_of_logs + sum_of_logs_leftover)
+		if (log == False):
+			L = math.exp(sum_of_logs + sum_of_logs_leftover)
+		else:
+			L = sum_of_logs + sum_of_logs_leftover
+
 		if(L > maxL):
 			maxL = L
 			maxns = ns
 	collection.liklihood = maxL
 	collection.ns = maxns
-	print("I am done calculating a liklihood!")
 
 
 #	Function to calculate a collection's test statistic
-def test_stat(collection,all_neutrinos):
-	
+def test_stat(collection,all_neutrinos, log = True):
+
 	Tw = collection.width
-	L = collection.liklihood
+	if (log == False):
+		L = math.log(collection.liklihood)
+	else:
+		L = collection.liklihood
 	T = collection.total_time
 	N = len(all_neutrinos)
-	collection.TS = 2*(math.log(Tw) + math.log(L) - (N+1)*math.log(T))			
-	print(Tw,L,T,N,collection.TS,collection.ns)
+	collection.TS = 2*(math.log(Tw) + L - (N+1)*math.log(T))			
