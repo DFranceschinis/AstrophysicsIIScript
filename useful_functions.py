@@ -130,6 +130,7 @@ def random_event_time(measuring_start, measuring_end):
 
 #	A function to find the liklihood
 def liklihood(collection,all_neutrinos):
+	print("I am calculating a liklihood!")
 
 	N = collection.total_num_points
 	Ts = 1/(collection.width)
@@ -137,7 +138,8 @@ def liklihood(collection,all_neutrinos):
 	maxL = 0
 	maxns = 0
 
-	for ns in range(0,N):
+	for ns in range(0,N+1):
+		print(ns)
 		sum_of_logs = 0
 		sum_of_logs_leftover = (len(all_neutrinos) - N)*math.log((1-ns/N)*Tb)
 		for p in collection.points:
@@ -149,6 +151,7 @@ def liklihood(collection,all_neutrinos):
 			maxns = ns
 	collection.liklihood = maxL
 	collection.ns = maxns
+	print("I am done calculating a liklihood!")
 
 
 #	Function to calculate a collection's test statistic
