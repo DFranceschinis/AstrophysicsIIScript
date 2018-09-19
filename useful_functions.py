@@ -1,6 +1,6 @@
 #	create a funtion to calculate the solid angle of a region. The function takes 
-# 	an angle from the origin in degrees and returns the solid angle of that area
-def solid_angle(theta):
+# 	an angle from the origin in degrees and returns the solid angle in square degrees of that area
+def solid_angle(theta, type = "ster"):
 	import numpy as np 
 	import math
 
@@ -9,7 +9,12 @@ def solid_angle(theta):
 	#solid angle formula
 	d_omega = 2*np.pi*(1-np.cos(theta))
 
-	return(d_omega)	
+	if (type == "ster"):
+		return(d_omega)	
+	if (type == "deg"):
+		return(d_omega*(180/(np.pi))**2)
+	else:
+		return d_omega
 
 #	solid_angle_strip is a function which calculates the solid angle of a strip of sky.
 #	It takes in a scalar value dec1 which is the declination in degrees of the top vertical
@@ -20,7 +25,7 @@ def solid_angle(theta):
 #	changed if the user does not wish to find only the magnitude of the solid angle.
 #	The function uses the function solid_angle and will work for any given declinations.
 #	The function returns the solid angle of that strip.
-def solid_angle_strip(dec1, dec2, extent = 360, absolute = True):
+def solid_angle_strip(dec1, dec2, extent = 360, absolute = True, type = "ster"):
 	import numpy as np
 	import math
 
@@ -38,7 +43,12 @@ def solid_angle_strip(dec1, dec2, extent = 360, absolute = True):
 	if absolute:
 		d_omega = abs(d_omega)
 
-	return(d_omega)
+	if (type=="ster"):
+		return(d_omega)
+	if (type == "deg"):	
+		return(d_omega*(180/(np.pi))**2)
+	else:
+		return(d_omega)	
 
 ###	This will take an origin point and find all the points (pass as list) that are within max_angle of them
 ###	Returns a list of all the points. Iterate over the list if you want to do stuff with them.
@@ -64,18 +74,6 @@ def find_points_in_strip(theta1, theta2, points):
 
 	return matches
 
-###	This will find any points within a time window.
-###	This maybe work with rearranging the points in strip function but oh well
-###	This takes a start time, an end time, and the array of points.
-def find_points_in_time_window(timestart, timeend, points):
-	matches = []
-
-	for p in points:
-		if (p.MJD >= timestart) and (p.MJD <= timeend):
-			matches.append(p)
-
-	return matches
-
 ###	Finds the angular separation between two points.
 ###	Fairly self documenting.
 def find_angular_separation(origin_RA, origin_DEC, point_RA, point_DEC):
@@ -88,40 +86,6 @@ def find_angular_separation(origin_RA, origin_DEC, point_RA, point_DEC):
 
 	return origin_coord.separation(point_coord)
 
-###	This class will allow you to iterate over every time window
-###	Instead of returning all the time windows (which would suck),
-###	it does each calculation every time you call next
-###	You should work with this by making it a variable
-### and then looping over the variable
-### ex:		windows = Time_window_searcher(start, end, size, points)
-###			for win in windows:
-###					# Do stuff with the window
-
-class Time_window_searcher(object):
-	def __init__(self, time_start, time_end, time_window_size, points):
-		self.time_start = float(time_start)
-		self.time_end = float(time_end)
-		self.time_window_size = float(time_window_size)
-		self.points = points
-
-	def __iter__(self):
-		###	This doesn't necessarily need to return self, but will for now.
-		self.cur_start = self.time_start
-		self.cur_end = self.time_start + self.time_window_size
-		return self
-
-	def __next__(self):
-		if self.cur_start >= self.time_end:
-			raise StopIteration
-		if self.cur_end >= self.time_end:
-			###	This implementation detail is probably best
-			self.cur_end = self.time_end
-
-		window = find_points_in_time_window(self.cur_start, self.cur_end, self.points)
-		start = self.cur_start
-		end = self.cur_end
-		self.cur_start, self.cur_end = self.cur_end, self.cur_end + self.time_window_size
-		return (window, start, end)
 
 
 #	poisson_prob(num_events,background) gives the probability as given by a Poisson distribution of 
@@ -135,26 +99,22 @@ def poisson_prob(num_events,background):
 	import numpy as np
 	import math
 	
-	P_prob = ((background**n)/(math.factorial(n)))*np.exp(-background)
+	P_prob = ((background**num_events)/(math.factorial(num_events)))*np.exp(-background)
 
 	return P_prob
-			
 
 
-###	Split a list of points into sublists that are split according to time intervals
-###	that are described by the event density windows that are processed seperately.
-###	It returns a list of tuples. Each of these tuples contains the time window (so you can find the density),
-###	and a list of all points in that time window
+#	A function that calculates the poisson probability for finding a number of events GREATER THAN or
+#	EQUAL TO a given value Num_events. It will use the function poisson_prob() and sum over numbers up
+#	to Num_events and will subtract these from one.
+def summed_poisson_prob(Num_events, background):
 
-def event_density_windows(point_list, window_list):
-	final_list = list()
-	for window in window_list:
-		new_list = list()
-		for point in point_list:
-			if (point.MJD >= window.start and point.MJD <= window.end):
-				new_list.append(point)
-		final_list.append((window, new_list))
-	return final_list
+	Prob = sum([poisson_prob(s, background) for s in range(Num_events)])
+
+	summed_P_prob = 1 - Prob	
+
+	return summed_P_prob		
+
 
 
 #	Create 1257 randomised 'event times' in MJD which fit in the range of the

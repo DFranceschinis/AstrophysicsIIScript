@@ -3,6 +3,7 @@ import os
 import matplotlib.pyplot as plt
 import math
 from useful_functions import *
+from windowsearch import *
 
 
 __location__ = os.path.realpath(os.path.join(os.getcwd(), os.path.dirname(__file__)))
@@ -65,15 +66,24 @@ Ws = [p.weight for p in WeightedSUBSET]
 # plt.show()
 
 
-B = list(find_points_in_time_window(56067.076728,57159.599401, AstroScript.NEUTRINOS))
+# B = list(find_points_in_time_window(56067.076728,57159.599401, AstroScript.NEUTRINOS))
 
+<<<<<<< HEAD
 BEnergy = [N.ENERGY for N in B]
 counts,bins,c = plt.hist(BEnergy, 10)
 
 HistCounts = counts.tolist()
 HistBins = bins.tolist()
+=======
+# BEnergy = [N.ENERGY for N in B]
 
-plt.show()
+# plt.hist(BEnergy, 10, histtype='bar', align='mid', orientation='vertical')
+
+# a = plt.hist(BEnergy, 10, histtype='bar', align='mid', orientation='vertical')
+# print(a)
+>>>>>>> 58d3361946999e17f96f0f5e58bb763c0d3e67d0
+
+# plt.show()
 
 eB = []
 
