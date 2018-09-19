@@ -16,7 +16,14 @@ def test_data_001():
 
 	return (returned_list, returned_period, returned_collection)
 
+def test_data_002():
+	returned_list = list()
+	returned_list.append(fake_neutrino(MJD = 5, weight = 1))
+	returned_list.append(fake_neutrino(MJD = 7, weight = 1))
+	returned_period = fake_measure_period(start = 0, end = 10)
+	returned_collection = fake_Collection(points = returned_list[:1], width = 1, total_num_points = 1, total_time = 10)
 
+	return (returned_list, returned_period, returned_collection)
 ### -------------------------------------------------
 ###	REQUIREMENTS FOR LIKLIHOOD FUNCTION:
 ###	It requires a Collection:
@@ -47,12 +54,19 @@ def test_001(debug_text = False):
 		collection.debug(ns = True, TS = True)
 	return (collection)
 
+def test_002(debug_text = False):
+	neutrinos, period, collection = test_data_002()
+	liklihood(collection, neutrinos,0.001)
+	if (debug_text):
+		collection.debug(ns = True, liklihood = True)
+	return (collection)	
 
 
 def run_all_tests(debug_text = True):
-	test_001(debug_text)
+	test_002(debug_text)
 
 if __name__ == '__main__':
+	print(__name__)
 	run_all_tests()
 
 

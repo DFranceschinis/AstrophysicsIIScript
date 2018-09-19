@@ -1,5 +1,6 @@
 import math
 import numpy as np
+import more_itertools as mit
 
 #	create a funtion to calculate the solid angle of a region. The function takes 
 # 	an angle from the origin in degrees and returns the solid angle in square degrees of that area
@@ -129,7 +130,7 @@ def random_event_time(measuring_start, measuring_end):
 
 
 #	A function to find the liklihood
-def liklihood(collection,all_neutrinos):
+def liklihood(collection,all_neutrinos, inc = 0.1):
 	print("I am calculating a liklihood!")
 
 	N = collection.total_num_points
@@ -138,8 +139,8 @@ def liklihood(collection,all_neutrinos):
 	maxL = 0
 	maxns = 0
 
-	for ns in range(0,N+1):
-		print(ns)
+	for ns in mit.numeric_range(0,N,inc):
+	
 		sum_of_logs = 0
 		sum_of_logs_leftover = (len(all_neutrinos) - N)*math.log((1-ns/N)*Tb)
 		for p in collection.points:
@@ -162,4 +163,4 @@ def test_stat(collection,all_neutrinos):
 	T = collection.total_time
 	N = len(all_neutrinos)
 	collection.TS = 2*(math.log(Tw) + math.log(L) - (N+1)*math.log(T))			
-	print(Tw,L,T,N,collection.TS)
+	print(Tw,L,T,N,collection.TS,collection.ns)
