@@ -145,6 +145,9 @@ def liklihood(collection,all_neutrinos, inc = 0.1, log = True):
 
 		product = 1
 		for p in collection.points:
+			###	This can probably be optimised if you rearrange the log to have
+			###	ns outside of it, and then the rest being a constant value for the Ts/Tb
+			###	and then store that constant in the point!
 			sum_of_logs += math.log((ns/N)*p.weight*Ts + (1-ns/N)*Tb)
 
 		if (log == False):
