@@ -146,29 +146,34 @@ def window_search_simple_box(Neutrino_list, Period_list, start_time, end_time, d
 def search_multiple_windows_TS(Neutrino_list, Period_list, start_time, end_time, delta_t, window_size_list, p_value, window_density, area):
 	greatest_TS_valued_collection = Collection()
 	greatest_TS_valued_collection.TS = -100000000000
+	greatest_TS_valued_collection.liklihood = -100000000000
 
 	for size in window_size_list:
 		print("----------	This is for window width: ",size,"-------------")
 		collection = window_search_simple_TS(Neutrino_list, Period_list, start_time, end_time,delta_t, size, p_value, window_density, area)
+		test_stat(collection, Neutrino_list)
 		if (len(collection.points) > 0 and collection.TS > greatest_TS_valued_collection.TS):
 			print("Success!", collection.TS, greatest_TS_valued_collection.TS, greatest_TS_valued_collection.midTime, greatest_TS_valued_collection.width)
 			greatest_TS_valued_collection = collection
 		print("-----------------------------------------------------------")
 	return (greatest_TS_valued_collection)
 
-###	This will return the collection with the lowest p_value
+###	This will return the window position with the greatest liklihood
 def window_search_simple_TS(Neutrino_list, Period_list, start_time, end_time, delta_t, window_size, p_value, window_density, area):
 	matching_collection = Collection()
+	matching_collection.liklihood = -1000000000000	
 	matching_collection.TS = -1000000000000	
 
 	for collection in Time_window_searcher(start_time, end_time, delta_t, window_size, Neutrino_list,len(Neutrino_list)):		
-		liklihood(collection,Neutrino_list)
+		liklihood(collection,Neutrino_list, inc = 1)
 		###	Test stat is only a function of liklihood and window width, so for a constant window width
 		###	you can optimise by ignoring calculating test_stat and maximising for liklihood
 		###	This can save on calculating the test_stat potentially 100's of times per window width
-		test_stat(collection,Neutrino_list)
-		if (len(collection.points) > 0 and collection.TS > matching_collection.TS):
-			print("Success for Smaller!", collection.TS, matching_collection.TS)
+		
+		#test_stat(collection,Neutrino_list)
+
+		if (len(collection.points) > 0 and collection.liklihood > matching_collection.liklihood):
+			print("Success for Smaller!", collection.liklihood, matching_collection.liklihood)
 			matching_collection = collection
 	return(matching_collection)
 
