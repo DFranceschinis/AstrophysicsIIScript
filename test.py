@@ -7,17 +7,17 @@ import MatchedData as MD
 
 print("Start:", AstroScript.PERIODS[-2].start, "End:", AstroScript.PERIODS[-2].end)
 
-A = ws.window_search_simple_TS(MD.WeightedSUBSET, AstroScript.PERIODS, AstroScript.PERIODS[-2].start, AstroScript.PERIODS[-2].end, 1, 10, .1, AstroScript.PERIODS[-2].density, AstroScript.TOTAL_AREA)
+A = ws.window_search_simple_TS(MD.WeightedSUBSET, AstroScript.PERIODS, AstroScript.PERIODS[-2].start, AstroScript.PERIODS[-2].end, 1, 158, .1, AstroScript.PERIODS[-2].density, AstroScript.TOTAL_AREA)
 
-print(A,A.TS,A.liklihood,A.ns)
-#print(MD.WeightedSUBSET)
+print(A,"TS",A.TS,"Liklihood",A.liklihood,"ns",A.ns,A.midTime, A.width)
 
-# print('\n\nThis is the proper search\n\n')
 
-# search_times = range(1,int(AstroScript.PERIODS[-2].end - AstroScript.PERIODS[-2].start))
+print('\n\nThis is the proper search\n\n')
 
-# B = ws.search_multiple_windows(MD.WeightedSUBSET, AstroScript.PERIODS, AstroScript.PERIODS[-2].start, AstroScript.PERIODS[-2].end, 1, search_times, 0.1, AstroScript.PERIODS[-2].density, AstroScript.TOTAL_AREA)
+search_times = range(1,int(AstroScript.PERIODS[-2].end - AstroScript.PERIODS[-2].start))
 
-# print('\n\nResults:')
+B = ws.search_multiple_windows_TS(MD.WeightedSUBSET, AstroScript.PERIODS, AstroScript.PERIODS[-2].start, AstroScript.PERIODS[-2].end, 1, search_times, 0.1, AstroScript.PERIODS[-2].density, AstroScript.TOTAL_AREA)
 
-# print(B)
+print('\n\nResults:')
+
+print(B, "midTime:", B.midTime, "width:", B.width, "maxTS:", B.TS, "maxLiklihood", B.liklihood, "maxNS", B.ns, "#_pts_inside", len(B.points))

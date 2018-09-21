@@ -126,30 +126,47 @@ def window_search_simple_box(Neutrino_list, Period_list, start_time, end_time, d
 			matching_collection = collection
 	return(matching_collection)
 
+
+###	-------------------------
+###		Optimisation Ideas:
+###		For each window size, store the "no values in window" result
+###			and check if window empty, if so, return that matched store
+###		Store the previously returned value,
+###			When a new window is checked, you check the first point in its list,
+###			and its final point, if they are the same, then use the previous result (or ignore)
+###			this makes sense because nothing new can be between these two values
+###		Store the log value in the points for the window if required!
+###			This may allow for quick checking of a bool value and then returning that value
+###			instead of recalculating the factor from it. Not sure on this speed up!
+###				Maybe build an object that contains the default values for each window width, and bbool for the checking
+###				for each point? Perhaps it stores the values for each point?\
+###				Each point only really differs by S/B so you can just check the weighting value. Though I doubt they are ever the same
+###	-------------------------
+
 def search_multiple_windows_TS(Neutrino_list, Period_list, start_time, end_time, delta_t, window_size_list, p_value, window_density, area):
 	greatest_TS_valued_collection = Collection()
-	# least_p_valued_collection.p_value *= 100000
+	greatest_TS_valued_collection.TS = -100000000000
 
 	for size in window_size_list:
-		print(size)
-		collection = window_search_simple_box(Neutrino_list, Period_list, start_time, end_time,delta_t, size, p_value, window_density, area)
-		if (collection.TS > greatest_TS_valued_collection.TS):
-			print("Success!", collection.TS, greatest_TS_valued_collection.time_start)
+		print("----------	This is for window width: ",size,"-------------")
+		collection = window_search_simple_TS(Neutrino_list, Period_list, start_time, end_time,delta_t, size, p_value, window_density, area)
+		if (len(collection.points) > 0 and collection.TS > greatest_TS_valued_collection.TS):
+			print("Success!", collection.TS, greatest_TS_valued_collection.TS, greatest_TS_valued_collection.midTime, greatest_TS_valued_collection.width)
 			greatest_TS_valued_collection = collection
-
+		print("-----------------------------------------------------------")
 	return (greatest_TS_valued_collection)
 
 ###	This will return the collection with the lowest p_value
 def window_search_simple_TS(Neutrino_list, Period_list, start_time, end_time, delta_t, window_size, p_value, window_density, area):
 	matching_collection = Collection()
+	matching_collection.TS = -1000000000000	
 
-	# matching_collection.p_value *= (end_time - start_time) / window_size
 	for collection in Time_window_searcher(start_time, end_time, delta_t, window_size, Neutrino_list,len(Neutrino_list)):		
-		density = len(Neutrino_list) * (collection.end_time - collection.start_time)/(end_time - start_time)
 		liklihood(collection,Neutrino_list)
+		###	Test stat is only a function of liklihood and window width, so for a constant window width
+		###	you can optimise by ignoring calculating test_stat and maximising for liklihood
+		###	This can save on calculating the test_stat potentially 100's of times per window width
 		test_stat(collection,Neutrino_list)
-		# collection.p_value = summed_poisson_prob_new(len(collection.points), density) * (end_time - start_time) / window_size
-
 		if (len(collection.points) > 0 and collection.TS > matching_collection.TS):
 			print("Success for Smaller!", collection.TS, matching_collection.TS)
 			matching_collection = collection

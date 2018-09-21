@@ -9,20 +9,22 @@ print ("These are the tests for the liklihood function!")
 ###	and the time window
 def test_data_001():
 	returned_list = list()
-	for i in range(2, 10, 2):
+	for i in range(0, 10, 1):
 		returned_list.append(fake_neutrino(MJD = i, weight = 1))
 	returned_period = fake_measure_period(start = 0, end = 10)
-	returned_collection = fake_Collection(points = returned_list[:1], width = 2, total_num_points = 1, total_time = 10)
+	returned_collection = fake_Collection(points = returned_list[:1], width = 1, total_num_points = 10, total_time = 10)
 
 	return (returned_list, returned_period, returned_collection)
 
+
 #	This function creates the data for test002. We should expect the liklihood value to be just less than 1
-def test_data_002():
+def test_data_002(weighting = 1):
+
 	returned_list = list()
-	returned_list.append(fake_neutrino(MJD = 5, weight = 1))
+	returned_list.append(fake_neutrino(MJD = 5, weight = weighting))
 	returned_list.append(fake_neutrino(MJD = 7, weight = 1))
 	returned_period = fake_measure_period(start = 0, end = 10)
-	returned_collection = fake_Collection(points = returned_list[:1], width = 1, total_num_points = 1, total_time = 10)
+	returned_collection = fake_Collection(points = returned_list[:1], width = 1, total_num_points = 2, total_time = 10)
 
 	return (returned_list, returned_period, returned_collection)
 
@@ -60,21 +62,42 @@ def test_data_002():
 ###	Output: ???
 def test_001(debug_text = False):
 	neutrinos, period, collection = test_data_001()
-	liklihood(collection, neutrinos)
+	liklihood(collection, neutrinos,0.001)
 	if (debug_text):
-		collection.debug(ns = True, TS = True)
+		collection.debug(ns = True, liklihood = True)
 	return (collection)
 
 def test_002(debug_text = False):
 	neutrinos, period, collection = test_data_002()
-	liklihood(collection, neutrinos,0.001)
+	liklihood(collection, neutrinos,0.01)
 	if (debug_text):
 		collection.debug(ns = True, liklihood = True)
 	return (collection)	
 
+def test_003(debug_text = False, width_lower = 0, width_upper = 100, width_scale = 10):
+	neutrinos, period, collection = test_data_002(weighting = 1.5)
+	for i in range(width_upper, width_lower, -1):
+		width = i / width_scale
+		collection.width = width
+		liklihood(collection, neutrinos, 0.01)
+		if (debug_text):
+			print("----- For width =", width, " -----")
+			collection.debug(ns = True, liklihood = True)
+
+def test_004(debug_text = False):
+	neutrinos, period, collection = test_data_001()
+	for i in range(1,11):
+		print("For", i, "points inside the window!")
+		collection.points = neutrinos[:i]
+		liklihood(collection, neutrinos,0.001)
+		if (debug_text):
+			collection.debug(ns = True, liklihood = True)
+
+
+
 
 def run_all_tests(debug_text = True):
-	test_002(debug_text)
+	test_004(debug_text)
 
 if __name__ == '__main__':
 	print(__name__)
