@@ -16,6 +16,7 @@ def test_data_001():
 
 	return (returned_list, returned_period, returned_collection)
 
+#	This function creates the data for test002. We should expect the liklihood value to be just less than 1
 def test_data_002():
 	returned_list = list()
 	returned_list.append(fake_neutrino(MJD = 5, weight = 1))
@@ -24,6 +25,16 @@ def test_data_002():
 	returned_collection = fake_Collection(points = returned_list[:1], width = 1, total_num_points = 1, total_time = 10)
 
 	return (returned_list, returned_period, returned_collection)
+
+
+	#	Test data for test003. We expect the liklihood to give a value of
+	def test_data_003():
+		returned_list = list()
+		returned_list.append(fake_neutrino(MJD = 3, weight = 1))
+		returned_period = fake_measure_period(start = 0, end = 10)
+		returned_collection = fake_Collection(points = returned_list[:1], width = 1, total_num_points = 1, total_time = 10)
+
+		return(returned_list, returned_period, returned_collection)
 ### -------------------------------------------------
 ###	REQUIREMENTS FOR LIKLIHOOD FUNCTION:
 ###	It requires a Collection:

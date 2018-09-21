@@ -1,0 +1,16 @@
+What we did:
+In the data of the events recorded in IceCube from April 2008 to October 2017, we are given the time (in MJD), RA and Dec (in degrees), the error in position (in degrees) and the energy (in log10) of each event. 
+From this data, a plot of energy against time of event is given in Figure [?]. Figure [?] demonstrates that the majority of events have an energy between 102.5 and 104, and that the frequency of events increases as time increases. The latter is due to the upgrades of IceCube throughout the six measurement time periods where more ‘strings’ were added to the detector.
+Also plotted was a map of the events in RA and Dec with the colouring of each event representing the energy of that event. The position of the proposed source (in red) is also plotted in Figure [?]. From this plot it is seen that there is no clear clustering around the proposed source and there is no apparent correlation between the energy of the event and the angular distance from the proposed source.
+
+The data from period IC86b, which contained data from 16th May 2012 to the 18th May 2015 (1097 days) was analysed closer to find a clustering of events in time. To do this, the data was scanned across in a series of time windows and the number of events in each window were recorded. The size of the time window was varied for multiple scans. In each time window, the number of events present were analysed for the probability of that many events occuring in that time window given an average background amount given in the list_of_samples.txt file. This analysis showed a minimum probability of p for x events occuring in a time window t days long, centred around mjd Modified Julian Days. [make histogram of probabilities]
+This time window scanning was also repeated to analyse the liklihood function for the data given by 
+[blah eqn]
+Where, for every time window scan and for each event in the total time period, the liklihood function is calculated to maximise ns for the maximum liklihood.
+The liklihood found for the data set IC86b yeilded a result of [results]
+Using this maximum liklihood, the test statisitic of the data, given by
+[blah eqn]
+where [eqn: L(thi_100)] is the liklihood for ns = 0, Tw is the width of the time window used and T is the total time length of the measuring period.
+The test statistic found for the IC86b data set was [test stat]
+Once this test statistic is calculated, the data set was randomised by reassigning each of the events in the IC86b data set with new random MJD values within the measuring period. Again, the maximum liklihood and the test statistic for this random data set was calculated. This randomised data analysis was repeated [n – approx. 1000?] times and a distribution was built showing the test statistic for the real IC86b was position [at this part of the distribution] indicating [something along the lines of “the source is real!”].
+[insert TS distribution graph]
