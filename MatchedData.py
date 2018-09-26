@@ -66,26 +66,60 @@ Ws = [p.weight for p in WeightedSUBSET]
 # plt.show()
 
 
-# B = list(find_points_in_time_window(56067.076728,57159.599401, AstroScript.NEUTRINOS))
+B = list(find_points_in_time_window(56067.076728,57159.599401, AstroScript.NEUTRINOS))
 
-# BEnergy = [N.ENERGY for N in B]
+BEnergy = [N.ENERGY for N in B]
+counts,bins,c = plt.hist(BEnergy, 10)
 
-# plt.hist(BEnergy, 10, histtype='bar', align='mid', orientation='vertical')
-
-# a = plt.hist(BEnergy, 10, histtype='bar', align='mid', orientation='vertical')
-# print(a)
+HistCounts = counts.tolist()
+HistBins = bins.tolist()
 
 # plt.show()
 
+eB = []
 
-# Exponential = 2*math.pi*math.pow(p.UNC,2)*math.exp((math.pow(p.separation.value,2))/(2*(math.pow(p.UNC,2))))
-# Weight = p.weight
-# eB = 
+midBIN = []
+for b in range(len(HistBins) - 1):
+	middle = HistBins[b] + ((HistBins[b+1]-HistBins[b])/2)
+	midBIN.append(middle)
 
-# es = []
-# for p in WeightedSUBSET:
 
-# 	eq = 
-# 	es.append(eq)
-# 	print (eq)
+es = []
+exp = []
+wgt = []
+untm = []
+angsep = []
+whole = []
+unsq = []
 
+
+for p in WeightedSUBSET:
+	UncSq = math.pow(p.UNC,2)
+	AngSepSq = math.pow(p.separation.value,2)
+	
+	UncTerm = 1/(2*math.pi*UncSq)
+	Exponential = math.exp(-(AngSepSq)/(2*(UncSq)))
+	Weight = math.pow(10,p.weight)
+
+	untm.append(UncTerm)
+	exp.append(Exponential)
+	wgt.append(Weight)
+	angsep.append(AngSepSq)
+	unsq.append(UncSq)
+
+	print (p.MJD, p.ENERGY, p.weight)
+
+	for b in range(len(HistBins) - 1):
+		if HistBins[b]<= p.ENERGY and p.ENERGY < HistBins[b+1]:
+			countVal = HistCounts[b]/math.pow(midBIN[b],10)
+			eq = Weight*countVal/(Exponential*UncTerm)
+			es.append(math.log10(eq))
+			# print (countVal,eq,math.log10(eq))
+
+
+plt.scatter(Ens, es)
+# plt.scatter(wgt, exp)
+# plt.title("Energy vs EpsS")
+# plt.xlabel("Weight")
+# plt.ylabel("Exp Value")
+plt.show()
