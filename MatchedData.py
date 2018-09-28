@@ -14,11 +14,12 @@ MatchedDATA = []
 logDATA = []
 
 
-Matcheddatapoints = open(os.path.join(__location__,"data/86bMatchedPoints.csv"), 'r', encoding='utf-8-sig').readlines()
+Matcheddatapoints = open(os.path.join(__location__,"data/SubsetMJD.csv"), 'r', encoding='utf-8-sig').readlines()
 for line in Matcheddatapoints:
 	l=line.strip()
 	l.replace
 	MatchedDATA.append(float(l))
+
 
 Weighteddatapoints = open(os.path.join(__location__,"data/WeightedDataPoints.csv"), 'r', encoding='utf-8-sig')
 for line in Weighteddatapoints:
@@ -107,7 +108,6 @@ for p in WeightedSUBSET:
 	angsep.append(AngSepSq)
 	unsq.append(UncSq)
 
-	print (p.MJD, p.ENERGY, p.weight)
 
 	for b in range(len(HistBins) - 1):
 		if HistBins[b]<= p.ENERGY and p.ENERGY < HistBins[b+1]:
@@ -115,11 +115,11 @@ for p in WeightedSUBSET:
 			eq = Weight*countVal/(Exponential*UncTerm)
 			es.append(math.log10(eq))
 			# print (countVal,eq,math.log10(eq))
+print(len(es), len(Ens))
 
-
-plt.scatter(Ens, es)
-# plt.scatter(wgt, exp)
-# plt.title("Energy vs EpsS")
-# plt.xlabel("Weight")
-# plt.ylabel("Exp Value")
-plt.show()
+# plt.scatter(Ens, es)
+# # plt.scatter(wgt, exp)
+# # plt.title("Energy vs EpsS")
+# # plt.xlabel("Weight")
+# # plt.ylabel("Exp Value")
+# plt.show()
