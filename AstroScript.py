@@ -232,7 +232,7 @@ def sky_map():
 	ax.plot(ORIGIN_RA, ORIGIN_DEC, 'ro', label='TXS0506+056')
 	ax.legend(loc="upper right")
 	ax.set(title='Right Ascension and Declination of Data Readings', xlabel='Right Ascension (Degrees)', ylabel='Declination (Degrees)')
-	fig2.colorbar(smap, cax=cax, orientation='vertical', label='Energy')
+	fig2.colorbar(smap, cax=cax, orientation='vertical', label='Energy (log10)')
 	    
 
 

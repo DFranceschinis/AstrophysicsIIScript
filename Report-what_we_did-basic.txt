@@ -1,16 +1,34 @@
-What we did:
-In the data of the events recorded in IceCube from April 2008 to October 2017, we are given the time (in MJD), RA and Dec (in degrees), the error in position (in degrees) and the energy (in log10) of each event. 
-From this data, a plot of energy against time of event is given in Figure [?]. Figure [?] demonstrates that the majority of events have an energy between 102.5 and 104, and that the frequency of events increases as time increases. The latter is due to the upgrades of IceCube throughout the six measurement time periods where more ‘strings’ were added to the detector.
-Also plotted was a map of the events in RA and Dec with the colouring of each event representing the energy of that event. The position of the proposed source (in red) is also plotted in Figure [?]. From this plot it is seen that there is no clear clustering around the proposed source and there is no apparent correlation between the energy of the event and the angular distance from the proposed source.
+Beakdown of tasks:
+In order to recreate the analysis that IceCube used to conlude that the proposed source TXS 0506+056 is in fact a source of neutrinos, we broke up the tasks in the folowing way:
+- Shayne and Muskan thouroughly read the paper published and higlighted key information and results.
+- Daniel and Kendall coded multiple small functions and classes to use to find the solid angle of an area or strip, find the events in a certian area, find the angular separation between two given points, find the poisson probability, create a random event time, calculate the maximum liklihood value and calculate the test statistic for the maximum liklihood value; as well as classes to place the actual neutrino events, neutrino events with randomised times and the measuring time periods.
+- Daniel created functions which could search through different time windows of varying sizes and, using the previously coded functions, find the number of points in those windows, calculate the poisson probability of finding that many events in the time window given the background density, calculate the maximum liklihood value and calculate the test statistic value.
+- Shayne used a digitizer to extract the S/B values from one of the plots in the paper published by IceCube.
+- Shayne derived the S/B values from the [graph shape we expect or something along those lines].
+- Muskan collected background information about IceCube and Blazars.
+- Daniel and Kendall created test cases to test the scripts and code written.
+- Daniel wrote a test script to run the test cases on the code.
+- Daniel wrote a main script to run the program to obtain the results.
 
-The data from period IC86b, which contained data from 16th May 2012 to the 18th May 2015 (1097 days) was analysed closer to find a clustering of events in time. To do this, the data was scanned across in a series of time windows and the number of events in each window were recorded. The size of the time window was varied for multiple scans. In each time window, the number of events present were analysed for the probability of that many events occuring in that time window given an average background amount given in the list_of_samples.txt file. This analysis showed a minimum probability of p for x events occuring in a time window t days long, centred around mjd Modified Julian Days. [make histogram of probabilities]
-This time window scanning was also repeated to analyse the liklihood function for the data given by 
+
+
+What we did: (Methods)
+In the data of the events recorded in IceCube from April 2008 to October 2017, we are given the time (in MJD), RA and Dec (in degrees), the error in position (in degrees) and the energy (in log10) of each event. 
+
+In order to find if the Blazar TXS 0506+056 is a source of neutrinos that IceCube has detected, multiple methods were used. First we checked if there was a clustering of energy in time. Then we checked if there was a clustering in space around the direction of the source. Lastly we checked for a clustering in time using a poisson probability and a liklihood and test statistic.
+
+First, we checked if there was any clustering in energy and time by plotting the log10 of the energy against the MJD value of the neutrino events. This plot is shown in Figure [?]. Figure [?] demonstrates that the majority of events have a log10(energy) between 102.5 and 104, and that the frequency of events increases as time increases. The latter is due to the upgrades of IceCube throughout the six measurement time periods where more ‘strings’ were added to the detector.
+
+Second, we checked if there was any clustering in space around the position in the sky of TSX 0506+056. This was done by plotting a map of the events in RA and Dec along with the RA (77.3582 deg) and Dec (+5.69314 deg) of TSX 0506+056  (in red) in Figure [?]. The events have also been coloured according to their energy to see if there is any correlation. From this plot it is seen that there is no clear clustering around the proposed source and there is no apparent correlation between the energy of the event and the angular distance from the proposed source.
+
+Next, he data from period IC86b, which contained data from 16th May 2012 to the 18th May 2015 (1097 days) was analysed closer to find a clustering of events in time. This measuring period was chosen as it is known from the results from IceCube that there is a statistical clustering of events in time within this period. This allowed us to test whether our calculations were getting expected values. To find an event clustering in time, the data was scanned across in a series of time windows and the number of events in each window were recorded. The size of the time window was varied for multiple scans. In each time window, the number of events present were analysed for the probability of that many events occuring in that time window given an average background amount given in the list_of_samples.txt file. This analysis was done using a poisson probability calculation and using a maximised liklihood value and test statistic. [make histogram of probabilities?]
+For the liklihood and test statistic analysis, we used the liklihood function given by 
 [blah eqn]
 Where, for every time window scan and for each event in the total time period, the liklihood function is calculated to maximise ns for the maximum liklihood.
-The liklihood found for the data set IC86b yeilded a result of [results]
+For an event that is in the time window currently being searched, the value of S/B is given by the value read off of the digitized graph from the IceCube publication. For an event that is not in the time window being searched, the S/B value is defaulted to one. This value for the default S/B is an estimation and is not correct but allows us to test if the code is searching the windows and calculating the liklihood and the test statistic properly.
 Using this maximum liklihood, the test statisitic of the data, given by
 [blah eqn]
 where [eqn: L(thi_100)] is the liklihood for ns = 0, Tw is the width of the time window used and T is the total time length of the measuring period.
-The test statistic found for the IC86b data set was [test stat]
-Once this test statistic is calculated, the data set was randomised by reassigning each of the events in the IC86b data set with new random MJD values within the measuring period. Again, the maximum liklihood and the test statistic for this random data set was calculated. This randomised data analysis was repeated [n – approx. 1000?] times and a distribution was built showing the test statistic for the real IC86b was position [at this part of the distribution] indicating [something along the lines of “the source is real!”].
-[insert TS distribution graph]
+Once this test statistic was calculated and the result was similar to expected, we inteded to run through the process again using the real calculated S/B values from IceCube which was separate to thee public access data.
+
+Next, the data set was randomised by reassigning each of the events in the IC86b data set with new random MJD values within the measuring period. We planned to use this randomised data to again find the maximum liklihood and the test statistic for this random data set. Then, this randomised data analysis was to be repeated approximately 1000 times in order to build a distribution. This could show whether the test statistic found for the real data set was statistically significant from what could be obtained from selecting a sample of randomised data. This was not completed as the actual running of the program to calculate thousands of test statistics would have taken too long using the code we had written and only usign one computer to run the code.
